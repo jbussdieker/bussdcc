@@ -1,10 +1,11 @@
 from typing import Protocol, Callable, Any
 
-EventHandler = Callable[..., None]
+from .event import Event
+from .engine import Subscription
+
+EventHandler = Callable[[Event], None]
 
 
-class EventBusProtocol(Protocol):
-    """Protocol for an event bus."""
-
-    def emit(self, event: str, **kwargs: Any) -> None: ...
-    def on(self, event: str, handler: EventHandler) -> None: ...
+class EventEngineProtocol(Protocol):
+    def emit(self, name: str, **data: Any) -> Event: ...
+    def subscribe(self, handler: EventHandler) -> Subscription: ...

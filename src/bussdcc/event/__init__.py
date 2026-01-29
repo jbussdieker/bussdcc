@@ -1,7 +1,7 @@
-from .bus import EventBus
-from .protocol import EventBusProtocol
+from .engine import EventEngine
+from .protocol import EventEngineProtocol
 
 __all__ = [
-    "EventBusProtocol",
-    "EventBus",
+    "EventEngine",
+    "EventEngineProtocol",
 ]

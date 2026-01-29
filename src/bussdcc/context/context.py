@@ -2,8 +2,8 @@ from typing import Any, Callable
 
 from bussdcc.clock import Clock
 from bussdcc.runtime.protocol import RuntimeProtocol
-from bussdcc.event.protocol import EventBusProtocol
-from bussdcc.event.bus import EventBus
+from bussdcc.event.protocol import EventEngineProtocol
+from bussdcc.event.engine import EventEngine, Subscription
 
 from .protocol import ContextProtocol
 
@@ -13,11 +13,11 @@ class Context(ContextProtocol):
         self,
         clock: Clock,
         runtime: RuntimeProtocol,
-        event_bus: EventBusProtocol | None = None,
+        events: EventEngineProtocol,
     ):
         self.clock: Clock = clock
         self.runtime: RuntimeProtocol = runtime
-        self.events: EventBusProtocol = event_bus or EventBus()
+        self.events = events
 
     def sleep(self, seconds: float) -> None:
         self.clock.sleep(seconds)
@@ -25,5 +25,5 @@ class Context(ContextProtocol):
     def emit(self, event: str, **kwargs: Any) -> None:
         self.events.emit(event, **kwargs)
 
-    def on(self, event: str, handler: Callable[..., None]) -> None:
-        self.events.on(event, handler)
+    def on(self, handler: Callable[..., None]) -> Subscription:
+        return self.events.subscribe(handler)
