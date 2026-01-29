@@ -5,6 +5,7 @@ from bussdcc.clock import Clock, SystemClock
 from bussdcc.device import DeviceProtocol
 from bussdcc.event import EventEngine
 from bussdcc.state import StateEngine
+from bussdcc.process import ProcessProtocol
 from bussdcc.version import get_version
 
 from .protocol import RuntimeProtocol
@@ -16,6 +17,7 @@ class Runtime(RuntimeProtocol):
         self.events = EventEngine(clock=self.clock)
         self.state = StateEngine()
         self._devices: Dict[str, DeviceProtocol] = {}
+        self._processes: Dict[str, ProcessProtocol] = {}
         # type-safe context using RuntimeProtocol
         self.ctx: ContextProtocol = Context(
             clock=self.clock, runtime=self, events=self.events, state=self.state
@@ -27,6 +29,11 @@ class Runtime(RuntimeProtocol):
         if self._booted:
             raise RuntimeError("Cannot register devices after boot")
         self._devices[device.name] = device
+
+    def register_process(self, process: ProcessProtocol) -> None:
+        if self._booted:
+            raise RuntimeError("Cannot register processes after boot")
+        self._processes[process.name] = process
 
     def get_device(self, name: str) -> DeviceProtocol | None:
         """Retrieve a registered device by name."""
@@ -46,14 +53,20 @@ class Runtime(RuntimeProtocol):
         for device in self._devices.values():
             device.attach(self.ctx)
 
+        for process in self._processes.values():
+            process.attach(self.ctx)
+
         self._booted = True
         self.ctx.emit("system.booted", version=self.version)
 
     def shutdown(self, reason: Optional[str] = None) -> None:
-        self.ctx.emit("system.shutting_down")
+        self.ctx.emit("system.shutting_down", reason=reason)
 
         # Detach devices in reverse order
         for device in reversed(list(self._devices.values())):
             device.detach()
+
+        for process in self._processes.values():
+            process.detach()
 
         self.ctx.emit("system.shutdown")
