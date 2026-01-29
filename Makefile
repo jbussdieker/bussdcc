@@ -19,6 +19,10 @@ clean:
 	python3 -m venv --system-site-packages .venv
 
 context:
+	@echo "# README.md"
+	@cat README.md
+	@echo ""
+	@echo ""
 	@echo "# pyproject.toml"
 	@cat pyproject.toml
 	@echo ""

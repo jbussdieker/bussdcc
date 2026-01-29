@@ -10,7 +10,7 @@ The project is intentionally minimal: it defines *contracts and flow*, not polic
 
 ## Design Philosophy
 
-bussdcc is built around a few core ideas:
+bussdcc is built around a few core principles:
 
 * **Cybernetics over frameworks** – components interact through feedback (events), not tight coupling.
 * **Protocols first** – behavior is defined by contracts (`typing.Protocol`), not inheritance trees.
@@ -54,9 +54,20 @@ It provides access to:
 * The event bus
 
 ```python
+# sleep for 1 second
 ctx.sleep(1.0)
+
+# emit a custom event
 ctx.emit("custom.event", value=42)
+
+# subscribe to all events
+sub = ctx.on(lambda evt: print(evt.name, evt.data))
+
+# unsubscribe
+sub.cancel()
 ```
+
+> Note: `Context.on` returns a `Subscription` object that can be cancelled to stop receiving events.
 
 Context does **not** own policy or state — it only exposes capabilities.
 
@@ -94,19 +105,21 @@ Devices automatically emit lifecycle events:
 
 ### Events
 
-bussdcc uses a simple event bus abstraction.
+bussdcc uses a synchronous in‑process event bus.
 
 Events are:
 
 * Named by string
 * Emitted with keyword payloads
 * Handled by registered callbacks
+* Can be unsubscribed via `Subscription.cancel()`
 
 ```python
-rt.ctx.on("device.attached", lambda device: print("Attached:", device))
+# subscribe to lifecycle events
+sub = rt.ctx.on(lambda evt: print(evt.name, evt.data))
 ```
 
-The default `EventBus` is synchronous and in‑process, but the interface allows other implementations.
+The `EventEngine` is intentionally simple, thread-safe, and deterministic.
 
 ---
 
