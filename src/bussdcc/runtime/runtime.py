@@ -4,6 +4,7 @@ from bussdcc.context import Context, ContextProtocol
 from bussdcc.clock import Clock, SystemClock
 from bussdcc.device import DeviceProtocol
 from bussdcc.event import EventEngine
+from bussdcc.state import StateEngine
 from bussdcc.version import get_version
 
 from .protocol import RuntimeProtocol
@@ -13,10 +14,11 @@ class Runtime(RuntimeProtocol):
     def __init__(self, *, clock: Optional[Clock] = None):
         self.clock: Clock = clock or SystemClock()
         self.events = EventEngine(clock=self.clock)
+        self.state = StateEngine()
         self._devices: Dict[str, DeviceProtocol] = {}
         # type-safe context using RuntimeProtocol
         self.ctx: ContextProtocol = Context(
-            clock=self.clock, runtime=self, events=self.events
+            clock=self.clock, runtime=self, events=self.events, state=self.state
         )
         self._booted: bool = False
         self.version: str = get_version()

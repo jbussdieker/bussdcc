@@ -4,6 +4,7 @@ from bussdcc.clock import Clock
 from bussdcc.runtime.protocol import RuntimeProtocol
 from bussdcc.event.protocol import EventEngineProtocol
 from bussdcc.event.engine import EventEngine, Subscription
+from bussdcc.state.protocol import StateEngineProtocol
 
 from .protocol import ContextProtocol
 
@@ -14,10 +15,12 @@ class Context(ContextProtocol):
         clock: Clock,
         runtime: RuntimeProtocol,
         events: EventEngineProtocol,
+        state: StateEngineProtocol,
     ):
         self.clock: Clock = clock
         self.runtime: RuntimeProtocol = runtime
         self.events = events
+        self.state = state
 
     def sleep(self, seconds: float) -> None:
         self.clock.sleep(seconds)
