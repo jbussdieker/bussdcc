@@ -1,0 +1,65 @@
+[project]
+name = "bussdcc"
+dynamic = [
+    "version",
+]
+dependencies = [
+]
+description = "A cybernetic runtime for Python, providing a resilient core for managing devices, services, and processes in autonomous or IoT systems."
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [
+    { name = "Joshua B. Bussdieker", email = "jbussdieker@gmail.com" },
+]
+maintainers = [
+    { name = "Joshua B. Bussdieker", email = "jbussdieker@gmail.com" },
+]
+classifiers = [
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: System :: Hardware",
+    "Topic :: System :: Networking",
+    "Topic :: System :: Systems Administration",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Human Machine Interfaces",
+    "Development Status :: 2 - Pre-Alpha",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Operating System :: OS Independent",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Natural Language :: English",
+    "Typing :: Typed",
+]
+keywords = [
+    "cybernetics",
+    "runtime",
+    "orchestration",
+    "automation",
+    "iot",
+    "hardware-control",
+    "process-management",
+    "service-management",
+    "kernel",
+    "durable",
+    "python-framework",
+]
+license = "MIT"
+
+[project.urls]
+Homepage = "https://github.com/jbussdieker/bussdcc"
+Documentation = "https://github.com/jbussdieker/bussdcc/blob/main/README.md"
+Repository = "https://github.com/jbussdieker/bussdcc"
+Issues = "https://github.com/jbussdieker/bussdcc/issues"
+Changelog = "https://github.com/jbussdieker/bussdcc/blob/main/CHANGELOG.md"
+
+[build-system]
+requires = [
+    "setuptools",
+    "setuptools-scm",
+]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools_scm]
+fallback_version = "0.0.0"
