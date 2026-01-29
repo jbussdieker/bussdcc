@@ -3,6 +3,7 @@ from typing import Optional, Dict
 from bussdcc.context import Context, ContextProtocol
 from bussdcc.clock import Clock, SystemClock
 from bussdcc.device import DeviceProtocol
+from bussdcc.version import get_version
 
 from .protocol import RuntimeProtocol
 
@@ -14,6 +15,7 @@ class Runtime(RuntimeProtocol):
         # type-safe context using RuntimeProtocol
         self.ctx: ContextProtocol = Context(clock=self.clock, runtime=self)
         self._booted: bool = False
+        self.version: str = get_version()
 
     def register_device(self, device: DeviceProtocol) -> None:
         if self._booted:
@@ -32,14 +34,14 @@ class Runtime(RuntimeProtocol):
         if self._booted:
             return
 
-        self.ctx.emit("system.booting")
+        self.ctx.emit("system.booting", version=self.version)
 
         # Boot all registered devices
         for device in self._devices.values():
             device.attach(self.ctx)
 
         self._booted = True
-        self.ctx.emit("system.booted")
+        self.ctx.emit("system.booted", version=self.version)
 
     def shutdown(self, reason: Optional[str] = None) -> None:
         self.ctx.emit("system.shutting_down")
