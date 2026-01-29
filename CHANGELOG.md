@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.4.0](https://github.com/jbussdieker/bussdcc/compare/v0.3.0...v0.4.0) (2026-01-29)
+
+
+### Features
+
+* add processes ([4b580e0](https://github.com/jbussdieker/bussdcc/commit/4b580e04da6d3da74f6c39279948183758f7ecf8))
+* add state ([bfdfbda](https://github.com/jbussdieker/bussdcc/commit/bfdfbdac3a59d4d6dcfdfe680ae7c5b0723cf051))
+
+
+### Documentation
+
+* update readme ([3c1d8f6](https://github.com/jbussdieker/bussdcc/commit/3c1d8f6d22a9abc8ac5c7aa3ebcd9845493a62ef))
+
 ## [0.3.0](https://github.com/jbussdieker/bussdcc/compare/v0.2.0...v0.3.0) (2026-01-29)
 
 
