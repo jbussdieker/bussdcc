@@ -1,25 +1,25 @@
 # BussDCC
 
-**bussdcc** (Bussdieker Durable Cybernetic Core) is a minimal, strongly‑typed cybernetic runtime for Python.
+**bussdcc** (Bussdieker Durable Cybernetic Core) is a **minimal, strongly-typed cybernetic runtime for Python**.
 
-It provides a small but resilient core for building systems that coordinate **devices**, **services**, and **processes** through explicit lifecycles and event‑driven communication.
+It provides a resilient core for building systems that coordinate **devices**, **processes**, and **services** through **explicit lifecycles**, **event-driven communication**, and **strict typing**.
 
-The project is intentionally minimal: it defines *contracts and flow*, not policy.
+The project is intentionally **lightweight**: it defines *contracts and flow*, not application policies.
 
 ---
 
 ## Design Philosophy
 
-bussdcc is built around a few core principles:
+bussdcc is built around a few guiding principles:
 
-* **Cybernetics over frameworks** – components interact through feedback (events), not tight coupling.
-* **Protocols first** – behavior is defined by contracts (`typing.Protocol`), not inheritance trees.
-* **Replaceable infrastructure** – clocks, event buses, and runtimes can be swapped without refactors.
-* **Explicit lifecycles** – devices and systems have clear attach/boot/shutdown phases.
-* **Strict typing** – designed to pass `mypy --strict` without sacrificing flexibility.
+* **Cybernetics over frameworks** – components interact through **feedback loops (events)**, not tight coupling.
+* **Protocols first** – behavior is defined via `typing.Protocol`, not deep inheritance trees.
+* **Replaceable infrastructure** – clocks, event engines, state stores, and runtimes can be swapped independently.
+* **Explicit lifecycles** – devices and processes have clearly defined attach, boot, and shutdown phases.
+* **Strict typing** – compatible with `mypy --strict` without sacrificing flexibility.
 
-If you’re looking for batteries‑included automation, this is not it.
-If you want a clean core to build *your own* system on, you’re in the right place.
+> If you’re looking for batteries-included automation, this is **not** it.
+> If you want a clean core to build *your own* system, you’re in the right place.
 
 ---
 
@@ -27,12 +27,11 @@ If you want a clean core to build *your own* system on, you’re in the right pl
 
 ### Runtime
 
-The `Runtime` is the system coordinator. It:
+The **Runtime** coordinates the system. Responsibilities include:
 
-* Owns the system clock
-* Manages registered devices
-* Creates the shared `Context`
-* Emits lifecycle events (`system.booting`, `system.booted`, etc.)
+* Managing devices and processes
+* Creating the shared `Context`
+* Emitting system lifecycle events (`system.booting`, `system.booted`, etc.)
 
 ```python
 from bussdcc import Runtime
@@ -41,43 +40,44 @@ rt = Runtime()
 rt.boot()
 ```
 
+After boot, the runtime exposes a **Context** to all attached devices and processes.
+
 ---
 
 ### Context
 
-The `Context` is a lightweight capability container passed to devices and services.
+The **Context** is a lightweight capability container passed to devices and processes.
 
-It provides access to:
+It provides:
 
-* The system clock
-* The runtime interface
-* The event bus
+* System clock access
+* Event emission and subscription
+* Runtime interface
+* State access
 
 ```python
-# sleep for 1 second
+# Sleep for 1 second
 ctx.sleep(1.0)
 
-# emit a custom event
+# Emit a custom event
 ctx.emit("custom.event", value=42)
 
-# subscribe to all events
+# Subscribe to all events
 sub = ctx.on(lambda evt: print(evt.name, evt.data))
 
-# unsubscribe
+# Unsubscribe
 sub.cancel()
 ```
 
-> Note: `Context.on` returns a `Subscription` object that can be cancelled to stop receiving events.
-
-Context does **not** own policy or state — it only exposes capabilities.
+> Note: `Context` **does not own policy** or decision-making logic — it only exposes capabilities.
 
 ---
 
 ### Devices
 
-Devices represent hardware, external resources, or boundary integrations.
+Devices represent **hardware, external resources, or boundary integrations**.
 
-They follow a simple lifecycle:
+Device lifecycle:
 
 * `attach(ctx)` → acquire resources
 * `detach()` → release resources
@@ -103,23 +103,47 @@ Devices automatically emit lifecycle events:
 
 ---
 
-### Events
+### Processes
 
-bussdcc uses a synchronous in‑process event bus.
+Processes are **event-driven units of work**. They:
 
-Events are:
-
-* Named by string
-* Emitted with keyword payloads
-* Handled by registered callbacks
-* Can be unsubscribed via `Subscription.cancel()`
+* Subscribe to events
+* React to events in `on_event()`
+* Support `on_start()` and `on_stop()` lifecycle hooks
 
 ```python
-# subscribe to lifecycle events
+from bussdcc.process import Process
+
+class Logger(Process):
+    name = "logger"
+
+    def on_event(self, ctx, evt):
+        print(f"[{evt.time}] {evt.name}: {evt.data}")
+```
+
+Processes can be supervised and restarted by higher-level logic if desired.
+
+Lifecycle events emitted by processes include:
+
+* `process.started`
+* `process.stopped`
+* `process.error`
+
+---
+
+### Events
+
+bussdcc uses a **synchronous, in-process event bus**.
+
+* Events are named strings with keyword payloads.
+* Callbacks are registered via `Context.on()`.
+* Subscriptions can be cancelled at any time.
+
+```python
 sub = rt.ctx.on(lambda evt: print(evt.name, evt.data))
 ```
 
-The `EventEngine` is intentionally simple, thread-safe, and deterministic.
+The event engine is **thread-safe, deterministic, and minimal**.
 
 ---
 
@@ -128,23 +152,22 @@ The `EventEngine` is intentionally simple, thread-safe, and deterministic.
 **It is:**
 
 * A cybernetic kernel
-* A coordination layer
-* A foundation for IoT, automation, and autonomous systems
+* A coordination layer for IoT or automation
+* A foundation for durable, event-driven systems
 
 **It is not:**
 
 * An application framework
-* A task scheduler
+* A scheduler or cron replacement
 * An opinionated automation platform
 
-Those can be built *on top*.
+You can build higher-level frameworks, supervisors, or schedulers *on top*.
 
 ---
 
 ## Status
 
-**Pre‑alpha.**
-
+**Pre-alpha.**
 The core architecture is stabilizing, but APIs may still evolve.
 
 ---
@@ -155,4 +178,4 @@ MIT License
 
 ---
 
-> *Durable systems start with clear contracts and honest boundaries.*
+> *Durable systems start with clear contracts, explicit lifecycles, and honest boundaries.*
