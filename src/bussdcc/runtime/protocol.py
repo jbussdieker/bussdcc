@@ -1,0 +1,13 @@
+from typing import Protocol, Optional
+
+from bussdcc.device import DeviceProtocol
+from bussdcc.context import ContextProtocol
+
+
+class RuntimeProtocol(Protocol):
+    ctx: "ContextProtocol"
+
+    def boot(self) -> None: ...
+    def shutdown(self, reason: Optional[str] = None) -> None: ...
+    def get_device(self, name: str) -> DeviceProtocol | None: ...
+    def list_devices(self) -> list[str]: ...

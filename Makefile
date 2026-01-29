@@ -17,3 +17,11 @@ clean:
 	.venv/bin/pip install black
 .venv/bin/python:
 	python3 -m venv --system-site-packages .venv
+
+context:
+	@echo "# pyproject.toml"
+	@cat pyproject.toml
+	@echo ""
+	@echo ""
+	@for f in $$(find src -type f -name "*.py"); do echo "# $$f"; cat $$f; echo; echo; done
+
