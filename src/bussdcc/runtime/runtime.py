@@ -5,6 +5,7 @@ from bussdcc.clock import Clock, SystemClock
 from bussdcc.device import DeviceProtocol
 from bussdcc.event import EventEngine
 from bussdcc.state import StateEngine
+from bussdcc.service import ServiceProtocol, ServiceSupervisor
 from bussdcc.process import ProcessProtocol
 from bussdcc.version import get_version
 
@@ -17,6 +18,7 @@ class Runtime(RuntimeProtocol):
         self.events = EventEngine(clock=self.clock)
         self.state = StateEngine()
         self._devices: Dict[str, DeviceProtocol] = {}
+        self._services: Dict[str, ServiceProtocol] = {}
         self._processes: Dict[str, ProcessProtocol] = {}
         # type-safe context using RuntimeProtocol
         self.ctx: ContextProtocol = Context(
@@ -24,11 +26,17 @@ class Runtime(RuntimeProtocol):
         )
         self._booted: bool = False
         self.version: str = get_version()
+        self._service_supervisor: ServiceSupervisor | None = None
 
     def register_device(self, device: DeviceProtocol) -> None:
         if self._booted:
             raise RuntimeError("Cannot register devices after boot")
         self._devices[device.name] = device
+
+    def register_service(self, service: ServiceProtocol) -> None:
+        if self._booted:
+            raise RuntimeError("Cannot register services after boot")
+        self._services[service.name] = service
 
     def register_process(self, process: ProcessProtocol) -> None:
         if self._booted:
@@ -53,6 +61,13 @@ class Runtime(RuntimeProtocol):
         for device in self._devices.values():
             device.attach(self.ctx)
 
+        # Start services under supervisor
+        self._service_supervisor = ServiceSupervisor(self.ctx)
+        for service in self._services.values():
+            self._service_supervisor.register(service)
+        self._service_supervisor.start_all()
+
+        # Attach processes
         for process in self._processes.values():
             process.attach(self.ctx)
 
@@ -62,10 +77,15 @@ class Runtime(RuntimeProtocol):
     def shutdown(self, reason: Optional[str] = None) -> None:
         self.ctx.emit("system.shutting_down", reason=reason)
 
+        # Stop services first
+        if self._service_supervisor:
+            self._service_supervisor.stop_all()
+
         # Detach devices in reverse order
         for device in reversed(list(self._devices.values())):
             device.detach()
 
+        # Detach processes
         for process in self._processes.values():
             process.detach()
 
