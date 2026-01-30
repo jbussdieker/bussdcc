@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.1](https://github.com/jbussdieker/bussdcc/compare/v0.6.0...v0.6.1) (2026-01-30)
+
+
+### Bug Fixes
+
+* remove stray print ([1263c16](https://github.com/jbussdieker/bussdcc/commit/1263c1653ff4b74f74c480f4bab043223d8e4d44))
+
 ## [0.6.0](https://github.com/jbussdieker/bussdcc/compare/v0.5.1...v0.6.0) (2026-01-30)
 
 
