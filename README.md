@@ -1,12 +1,46 @@
 # BussDCC
 
+![License](https://img.shields.io/badge/license-MIT-blue)
+![Python](https://img.shields.io/badge/python-3.11%2B-brightgreen)
+
 **bussdcc** (Bussdieker Durable Cybernetic Core) is a **minimal, strongly-typed cybernetic runtime for Python**.
 
 It provides a resilient core for building systems that coordinate **devices**, **processes**, and **services** through **explicit lifecycles**, **event-driven communication**, and **strict typing**.
 
 The project is intentionally **lightweight**: it defines *contracts and flow*, not application policies.
 
----
+## Quick Start
+
+```python
+from bussdcc import Runtime
+from bussdcc.device import Device
+from bussdcc.process import Process
+from bussdcc.service import Service
+
+# Define components
+class MyDevice(Device):
+    name = "device1"
+    def connect(self): print("Device online")
+    def disconnect(self): print("Device offline")
+
+class MyProcess(Process):
+    name = "logger"
+    def on_event(self, ctx, evt): print(evt.name, evt.data)
+
+class MyService(Service):
+    name = "heartbeat"
+    interval = 2.0
+    def tick(self, ctx): ctx.emit("heartbeat.tick")
+
+# Create runtime and register components
+rt = Runtime()
+rt.register_device(MyDevice())
+rt.register_process(MyProcess())
+rt.register_service(MyService())
+
+# Boot the system
+rt.boot()
+```
 
 ## Design Philosophy
 
@@ -21,169 +55,37 @@ bussdcc is built around a few guiding principles:
 > If you’re looking for batteries-included automation, this is **not** it.
 > If you want a clean core to build *your own* system, you’re in the right place.
 
----
-
 ## Core Concepts
 
 ### Runtime
 
-The **Runtime** coordinates the system. Responsibilities include:
-
-* Managing devices, processes, and services
-* Creating the shared `Context`
-* Emitting system lifecycle events (`system.booting`, `system.booted`, etc.)
-
-```python
-from bussdcc import Runtime
-
-rt = Runtime()
-rt.boot()
-```
-
-After boot, the runtime exposes a **Context** to all attached components and starts services under the **ServiceSupervisor**.
-
----
+The **Runtime** coordinates the system: manages devices, processes, and services, creates the shared `Context`, and emits system lifecycle events (`system.booting`, `system.booted`, etc.).
 
 ### Context
 
-The **Context** is a lightweight capability container passed to devices, processes, and services.
-
-It provides:
-
-* System clock access
-* Event emission and subscription
-* Runtime interface
-* State access
-
-```python
-# Sleep for 1 second
-ctx.sleep(1.0)
-
-# Emit a custom event
-ctx.emit("custom.event", value=42)
-
-# Subscribe to all events
-sub = ctx.on(lambda evt: print(evt.name, evt.data))
-
-# Unsubscribe
-sub.cancel()
-```
-
-> Note: `Context` **does not own policy** or decision-making logic — it only exposes capabilities.
-
----
+A lightweight capability container: system clock, event emission/subscription, runtime interface, and state access.
 
 ### Devices
 
-Devices represent **hardware, external resources, or boundary integrations**.
-
-Device lifecycle:
-
-* `attach(ctx)` → acquire resources
-* `detach()` → release resources
-
-```python
-from bussdcc.device import Device
-
-class Camera(Device):
-    name = "camera"
-
-    def connect(self):
-        print("Camera online")
-
-    def disconnect(self):
-        print("Camera offline")
-```
-
-Devices automatically emit lifecycle events:
-
-* `device.attached`
-* `device.detached`
-* `device.failed`
-
----
+Represent **hardware, external resources, or boundary integrations**. Lifecycle: `attach(ctx)` → `detach()`. Emit: `device.attached`, `device.detached`, `device.failed`.
 
 ### Processes
 
-Processes are **event-driven units of work**. They:
-
-* Subscribe to events
-* React to events in `on_event()`
-* Support `on_start()` and `on_stop()` lifecycle hooks
-
-```python
-from bussdcc.process import Process
-
-class Logger(Process):
-    name = "logger"
-
-    def on_event(self, ctx, evt):
-        print(f"[{evt.time}] {evt.name}: {evt.data}")
-```
-
-Lifecycle events emitted by processes include:
-
-* `process.started`
-* `process.stopped`
-* `process.error`
-
-Processes are attached by the **Runtime** and can be managed individually.
-
----
+Event-driven units of work. Lifecycle hooks: `on_start(ctx)`, `on_stop(ctx)`, `on_event(ctx, evt)`. Emit: `process.started`, `process.stopped`, `process.error`.
 
 ### Services
 
-Services are **long-running components** with a repeated execution model.
+Long-running components orchestrated by the **ServiceSupervisor**. Lifecycle: `start(ctx)`, `tick(ctx)`, `stop(ctx)`. Supervisor handles:
 
-They are **orchestrated under a ServiceSupervisor**, which handles:
-
-* Start, tick, and stop lifecycles
-* Automatic restarts on failure
+* Automatic restarts
 * Critical failure handling
 * Threaded execution
 
-Service lifecycle:
-
-* `start(ctx)` → called once when the service begins
-* `tick(ctx)` → called repeatedly while running
-* `stop(ctx)` → called once when stopping
-
-```python
-from bussdcc.service import Service
-
-class Heartbeat(Service):
-    name = "heartbeat"
-    interval = 2.0  # seconds
-
-    def tick(self, ctx):
-        ctx.emit("heartbeat.tick")
-```
-
-The ServiceSupervisor automatically emits lifecycle events for each service:
-
-* `service.started`
-* `service.stopped`
-* `service.error`
-* `service.restart`
-* `service.critical_failure`
-
----
+Events: `service.started`, `service.stopped`, `service.error`, `service.restart`, `service.critical_failure`.
 
 ### Events
 
-bussdcc uses a **synchronous, in-process event bus**.
-
-* Events are named strings with keyword payloads.
-* Callbacks are registered via `Context.on()`.
-* Subscriptions can be cancelled at any time.
-
-```python
-sub = rt.ctx.on(lambda evt: print(evt.name, evt.data))
-```
-
-The event engine is **thread-safe, deterministic, and minimal**.
-
----
+Synchronous, in-process, thread-safe event bus. Subscriptions can be cancelled. Events: named strings with keyword payloads.
 
 ## What bussdcc Is (and Isn’t)
 
@@ -199,21 +101,18 @@ The event engine is **thread-safe, deterministic, and minimal**.
 * A scheduler or cron replacement
 * An opinionated automation platform
 
-You can build higher-level frameworks, supervisors, or schedulers *on top*.
-
----
-
 ## Status
 
-**Pre-alpha.**
-The core architecture is stabilizing, but APIs may still evolve.
-
----
+**Pre-alpha.** APIs may still evolve.
 
 ## License
 
 MIT License
 
----
-
 > *Durable systems start with clear contracts, explicit lifecycles, and honest boundaries.*
+
+## Links
+
+* [Repository](https://github.com/jbussdieker/bussdcc)
+* [Issues](https://github.com/jbussdieker/bussdcc/issues)
+* [Documentation](https://github.com/jbussdieker/bussdcc/blob/main/README.md)
