@@ -48,9 +48,6 @@ class EventEngine:
             self._events.appendleft(evt)
             subs = list(self._subs)
 
-        if not subs:
-            print(f"[{self.clock.monotonic():.3f}] {name} {data}")
-
         for fn in subs:
             try:
                 fn(evt)
