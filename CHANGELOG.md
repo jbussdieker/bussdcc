@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.5.0](https://github.com/jbussdieker/bussdcc/compare/v0.4.0...v0.5.0) (2026-01-30)
+
+
+### Features
+
+* add services ([40984a9](https://github.com/jbussdieker/bussdcc/commit/40984a94ce04c10b11aa17b7226198528e822559))
+
+
+### Documentation
+
+* update readme ([00340d9](https://github.com/jbussdieker/bussdcc/commit/00340d92e022676780f8bcd853233aec154b7a8c))
+
 ## [0.4.0](https://github.com/jbussdieker/bussdcc/compare/v0.3.0...v0.4.0) (2026-01-29)
 
 
