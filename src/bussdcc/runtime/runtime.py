@@ -7,6 +7,7 @@ from bussdcc.event import EventEngine
 from bussdcc.state import StateEngine
 from bussdcc.service import ServiceProtocol, ServiceSupervisor
 from bussdcc.process import ProcessProtocol
+from bussdcc.interface import InterfaceProtocol
 from bussdcc.version import get_version
 
 from .protocol import RuntimeProtocol
@@ -20,6 +21,7 @@ class Runtime(RuntimeProtocol):
         self._devices: Dict[str, DeviceProtocol] = {}
         self._services: Dict[str, ServiceProtocol] = {}
         self._processes: Dict[str, ProcessProtocol] = {}
+        self._interfaces: Dict[str, InterfaceProtocol] = {}
         # type-safe context using RuntimeProtocol
         self.ctx: ContextProtocol = Context(
             clock=self.clock, runtime=self, events=self.events, state=self.state
@@ -42,6 +44,11 @@ class Runtime(RuntimeProtocol):
         if self._booted:
             raise RuntimeError("Cannot register processes after boot")
         self._processes[process.name] = process
+
+    def register_interface(self, interface: InterfaceProtocol) -> None:
+        if self._booted:
+            raise RuntimeError("Cannot register interfaces after boot")
+        self._interfaces[interface.name] = interface
 
     def get_device(self, name: str) -> DeviceProtocol | None:
         """Retrieve a registered device by name."""
@@ -71,6 +78,10 @@ class Runtime(RuntimeProtocol):
         for process in self._processes.values():
             process.attach(self.ctx)
 
+        # Attach interfaces
+        for interface in self._interfaces.values():
+            interface.attach(self.ctx)
+
         self._booted = True
         self.ctx.emit("system.booted", version=self.version)
 
@@ -88,5 +99,9 @@ class Runtime(RuntimeProtocol):
         # Detach processes
         for process in self._processes.values():
             process.detach()
+
+        # Detach interfaces
+        for interface in self._interfaces.values():
+            interface.detach()
 
         self.ctx.emit("system.shutdown")
