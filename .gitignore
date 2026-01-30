@@ -205,8 +205,3 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
-
-
-turu.json
-turu_state.json
-/grow_data/
