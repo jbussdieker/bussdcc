@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.0](https://github.com/jbussdieker/bussdcc/compare/v0.5.1...v0.6.0) (2026-01-30)
+
+
+### Features
+
+* add interfaces ([5a36219](https://github.com/jbussdieker/bussdcc/commit/5a362190d1c4974193395bef21ce5dbb820fcb02))
+
 ## [0.5.1](https://github.com/jbussdieker/bussdcc/compare/v0.5.0...v0.5.1) (2026-01-30)
 
 
