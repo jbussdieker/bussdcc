@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.1](https://github.com/jbussdieker/bussdcc/compare/v0.5.0...v0.5.1) (2026-01-30)
+
+
+### Documentation
+
+* update readme ([3c96893](https://github.com/jbussdieker/bussdcc/commit/3c96893d1b9c25467ee7875dea83f4723f513e87))
+
 ## [0.5.0](https://github.com/jbussdieker/bussdcc/compare/v0.4.0...v0.5.0) (2026-01-30)
 
 
