@@ -15,7 +15,7 @@ bussdcc is built around a few guiding principles:
 * **Cybernetics over frameworks** – components interact through **feedback loops (events)**, not tight coupling.
 * **Protocols first** – behavior is defined via `typing.Protocol`, not deep inheritance trees.
 * **Replaceable infrastructure** – clocks, event engines, state stores, and runtimes can be swapped independently.
-* **Explicit lifecycles** – devices and processes have clearly defined attach, boot, and shutdown phases.
+* **Explicit lifecycles** – devices, processes, and services have clearly defined attach, boot, tick, and shutdown phases.
 * **Strict typing** – compatible with `mypy --strict` without sacrificing flexibility.
 
 > If you’re looking for batteries-included automation, this is **not** it.
@@ -29,7 +29,7 @@ bussdcc is built around a few guiding principles:
 
 The **Runtime** coordinates the system. Responsibilities include:
 
-* Managing devices and processes
+* Managing devices, processes, and services
 * Creating the shared `Context`
 * Emitting system lifecycle events (`system.booting`, `system.booted`, etc.)
 
@@ -40,13 +40,13 @@ rt = Runtime()
 rt.boot()
 ```
 
-After boot, the runtime exposes a **Context** to all attached devices and processes.
+After boot, the runtime exposes a **Context** to all attached components and starts services under the **ServiceSupervisor**.
 
 ---
 
 ### Context
 
-The **Context** is a lightweight capability container passed to devices and processes.
+The **Context** is a lightweight capability container passed to devices, processes, and services.
 
 It provides:
 
@@ -121,13 +121,51 @@ class Logger(Process):
         print(f"[{evt.time}] {evt.name}: {evt.data}")
 ```
 
-Processes can be supervised and restarted by higher-level logic if desired.
-
 Lifecycle events emitted by processes include:
 
 * `process.started`
 * `process.stopped`
 * `process.error`
+
+Processes are attached by the **Runtime** and can be managed individually.
+
+---
+
+### Services
+
+Services are **long-running components** with a repeated execution model.
+
+They are **orchestrated under a ServiceSupervisor**, which handles:
+
+* Start, tick, and stop lifecycles
+* Automatic restarts on failure
+* Critical failure handling
+* Threaded execution
+
+Service lifecycle:
+
+* `start(ctx)` → called once when the service begins
+* `tick(ctx)` → called repeatedly while running
+* `stop(ctx)` → called once when stopping
+
+```python
+from bussdcc.service import Service
+
+class Heartbeat(Service):
+    name = "heartbeat"
+    interval = 2.0  # seconds
+
+    def tick(self, ctx):
+        ctx.emit("heartbeat.tick")
+```
+
+The ServiceSupervisor automatically emits lifecycle events for each service:
+
+* `service.started`
+* `service.stopped`
+* `service.error`
+* `service.restart`
+* `service.critical_failure`
 
 ---
 
