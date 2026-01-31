@@ -13,7 +13,7 @@ class Process(ProcessProtocol):
         try:
             self.on_event(self.ctx, evt)
         except Exception as e:
-            self.ctx.emit(
+            self.ctx.events.emit(
                 "process.error",
                 process=self.name,
                 error=repr(e),
@@ -24,14 +24,14 @@ class Process(ProcessProtocol):
         self.ctx = ctx
         self._sub = ctx.events.subscribe(self._on_event)
         self.on_start(ctx)
-        self.ctx.emit("process.started", process=self.name)
+        self.ctx.events.emit("process.started", process=self.name)
 
     def detach(self) -> None:
         try:
             self._sub.cancel()
             self.on_stop(self.ctx)
         finally:
-            self.ctx.emit("process.stopped", process=self.name)
+            self.ctx.events.emit("process.stopped", process=self.name)
 
     def on_start(self, ctx: ContextProtocol) -> None:
         pass

@@ -17,11 +17,11 @@ class Device(DeviceProtocol):
             self.connect()
         except Exception as e:
             if self.ctx:
-                self.ctx.emit("device.failed", device=self.name, error=repr(e))
+                self.ctx.events.emit("device.failed", device=self.name, error=repr(e))
             raise
         self.online = True
         if self.ctx:
-            self.ctx.emit("device.attached", device=self.name)
+            self.ctx.events.emit("device.attached", device=self.name)
 
     def detach(self) -> None:
         try:
@@ -29,7 +29,7 @@ class Device(DeviceProtocol):
         finally:
             self.online = False
             if self.ctx:
-                self.ctx.emit("device.detached", device=self.name)
+                self.ctx.events.emit("device.detached", device=self.name)
 
     def connect(self) -> None:
         """Open hardware / resources"""

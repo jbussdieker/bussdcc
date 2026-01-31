@@ -21,12 +21,3 @@ class Context(ContextProtocol):
         self.runtime: RuntimeProtocol = runtime
         self.events = events
         self.state = state
-
-    def sleep(self, seconds: float) -> None:
-        self.clock.sleep(seconds)
-
-    def emit(self, event: str, **kwargs: Any) -> None:
-        self.events.emit(event, **kwargs)
-
-    def on(self, handler: Callable[..., None]) -> Subscription:
-        return self.events.subscribe(handler)

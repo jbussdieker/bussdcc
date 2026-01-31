@@ -45,16 +45,16 @@ class ServiceSupervisor:
                         and not self._stop_flag.is_set()
                     ):
                         service.tick(self.ctx)
-                        self.ctx.sleep(getattr(service, "interval", 1.0))
+                        self.ctx.clock.sleep(getattr(service, "interval", 1.0))
                 except Exception as e:
-                    self.ctx.emit(
+                    self.ctx.events.emit(
                         "service.error",
                         service=service.name,
                         error=repr(e),
                         traceback=traceback.format_exc(),
                     )
                     if getattr(service, "critical", False):
-                        self.ctx.emit(
+                        self.ctx.events.emit(
                             "service.critical_failure",
                             service=service.name,
                             error=repr(e),
@@ -64,7 +64,7 @@ class ServiceSupervisor:
                         break
 
                     if getattr(service, "restart", True):
-                        self.ctx.emit(
+                        self.ctx.events.emit(
                             "service.restart",
                             service=service.name,
                         )
@@ -73,9 +73,9 @@ class ServiceSupervisor:
                         break
                 finally:
                     service.stop(self.ctx)
-                    self.ctx.emit("service.stopped", service=service.name)
+                    self.ctx.events.emit("service.stopped", service=service.name)
 
         t = threading.Thread(target=runner, name=f"service:{service.name}", daemon=True)
         self._threads[service.name] = t
         t.start()
-        self.ctx.emit("service.started", service=service.name)
+        self.ctx.events.emit("service.started", service=service.name)

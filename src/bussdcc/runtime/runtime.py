@@ -61,7 +61,7 @@ class Runtime(RuntimeProtocol):
         if self._booted:
             return
 
-        self.ctx.emit("system.booting", version=self.version)
+        self.ctx.events.emit("system.booting", version=self.version)
 
         # Boot all registered devices
         for device in self._devices.values():
@@ -82,10 +82,10 @@ class Runtime(RuntimeProtocol):
         self._service_supervisor.start_all()
 
         self._booted = True
-        self.ctx.emit("system.booted", version=self.version)
+        self.ctx.events.emit("system.booted", version=self.version)
 
     def shutdown(self, reason: Optional[str] = None) -> None:
-        self.ctx.emit("system.shutting_down", reason=reason)
+        self.ctx.events.emit("system.shutting_down", reason=reason)
 
         # Stop services first
         if self._service_supervisor:
@@ -103,4 +103,4 @@ class Runtime(RuntimeProtocol):
         for device in reversed(list(self._devices.values())):
             device.detach()
 
-        self.ctx.emit("system.shutdown")
+        self.ctx.events.emit("system.shutdown")
