@@ -7,7 +7,6 @@ from bussdcc.event import EventEngine
 from bussdcc.state import StateEngine
 from bussdcc.service import ServiceProtocol, ServiceSupervisor
 from bussdcc.process import ProcessProtocol
-from bussdcc.interface import InterfaceProtocol
 from bussdcc.version import get_version
 
 from .protocol import RuntimeProtocol
@@ -21,7 +20,7 @@ class Runtime(RuntimeProtocol):
         self._devices: Dict[str, DeviceProtocol] = {}
         self._services: Dict[str, ServiceProtocol] = {}
         self._processes: Dict[str, ProcessProtocol] = {}
-        self._interfaces: Dict[str, InterfaceProtocol] = {}
+        self._interfaces: Dict[str, ProcessProtocol] = {}
         # type-safe context using RuntimeProtocol
         self.ctx: ContextProtocol = Context(
             clock=self.clock, runtime=self, events=self.events, state=self.state
@@ -45,7 +44,7 @@ class Runtime(RuntimeProtocol):
             raise RuntimeError("Cannot register processes after boot")
         self._processes[process.name] = process
 
-    def register_interface(self, interface: InterfaceProtocol) -> None:
+    def register_interface(self, interface: ProcessProtocol) -> None:
         if self._booted:
             raise RuntimeError("Cannot register interfaces after boot")
         self._interfaces[interface.name] = interface
@@ -68,12 +67,6 @@ class Runtime(RuntimeProtocol):
         for device in self._devices.values():
             device.attach(self.ctx)
 
-        # Start services under supervisor
-        self._service_supervisor = ServiceSupervisor(self.ctx)
-        for service in self._services.values():
-            self._service_supervisor.register(service)
-        self._service_supervisor.start_all()
-
         # Attach processes
         for process in self._processes.values():
             process.attach(self.ctx)
@@ -81,6 +74,12 @@ class Runtime(RuntimeProtocol):
         # Attach interfaces
         for interface in self._interfaces.values():
             interface.attach(self.ctx)
+
+        # Start services under supervisor
+        self._service_supervisor = ServiceSupervisor(self.ctx)
+        for service in self._services.values():
+            self._service_supervisor.register(service)
+        self._service_supervisor.start_all()
 
         self._booted = True
         self.ctx.emit("system.booted", version=self.version)
@@ -92,16 +91,16 @@ class Runtime(RuntimeProtocol):
         if self._service_supervisor:
             self._service_supervisor.stop_all()
 
-        # Detach devices in reverse order
-        for device in reversed(list(self._devices.values())):
-            device.detach()
+        # Detach interfaces
+        for interface in self._interfaces.values():
+            interface.detach()
 
         # Detach processes
         for process in self._processes.values():
             process.detach()
 
-        # Detach interfaces
-        for interface in self._interfaces.values():
-            interface.detach()
+        # Detach devices in reverse order
+        for device in reversed(list(self._devices.values())):
+            device.detach()
 
         self.ctx.emit("system.shutdown")
