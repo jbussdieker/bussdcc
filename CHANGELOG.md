@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.7.0](https://github.com/jbussdieker/bussdcc/compare/v0.6.1...v0.7.0) (2026-01-31)
+
+
+### Features
+
+* improve context and runtime boundaries ([f8439ca](https://github.com/jbussdieker/bussdcc/commit/f8439ca71b6cde4612a8f71ba7480c80ec603368))
+* use process for interfaces and better boot/shutdown order ([aaffdae](https://github.com/jbussdieker/bussdcc/commit/aaffdae31e8328a775c4edbeeff4dc2bb1f32c75))
+
 ## [0.6.1](https://github.com/jbussdieker/bussdcc/compare/v0.6.0...v0.6.1) (2026-01-30)
 
 
