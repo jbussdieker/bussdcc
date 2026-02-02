@@ -1,7 +1,7 @@
 from abc import abstractmethod
 
 from bussdcc.event.event import Event
-from bussdcc.context import Context, ContextProtocol
+from bussdcc.context import ContextProtocol
 
 from .protocol import ProcessProtocol
 
@@ -40,5 +40,5 @@ class Process(ProcessProtocol):
         pass
 
     @abstractmethod
-    def on_event(self, ctx: ContextProtocol, event: Event) -> None:
+    def on_event(self, ctx: ContextProtocol, evt: Event) -> None:
         pass
