@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.8.0](https://github.com/jbussdieker/bussdcc/compare/v0.7.0...v0.8.0) (2026-02-02)
+
+
+### Features
+
+* add policy framework ([051700b](https://github.com/jbussdieker/bussdcc/commit/051700b06555bd1c3148edbd95a0cada86772533))
+
+
+### Documentation
+
+* update readme ([72f2ae7](https://github.com/jbussdieker/bussdcc/commit/72f2ae76701560d6cf39ce10a03502371b0c7b68))
+
 ## [0.7.0](https://github.com/jbussdieker/bussdcc/compare/v0.6.1...v0.7.0) (2026-01-31)
 
 
