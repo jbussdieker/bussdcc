@@ -1,6 +1,6 @@
+from typing import Callable, Deque, Any
 from collections import deque
 from dataclasses import dataclass
-from typing import Callable, Deque, Dict, Any
 import threading
 
 from bussdcc.clock import Clock

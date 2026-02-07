@@ -1,6 +1,5 @@
-from collections import deque
+from typing import Dict, Any
 from dataclasses import dataclass
-from typing import Callable, Deque, Dict, Any
 
 
 @dataclass(frozen=True)

@@ -1,5 +1,5 @@
-import threading
 from typing import Any
+import threading
 
 from .protocol import StateEngineProtocol
 
