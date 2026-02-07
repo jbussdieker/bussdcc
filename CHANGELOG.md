@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.0](https://github.com/jbussdieker/bussdcc/compare/v0.8.0...v0.9.0) (2026-02-07)
+
+
+### Features
+
+* add device id and rename name to kind ([90cdf31](https://github.com/jbussdieker/bussdcc/commit/90cdf317476c0e2af88a634edacef5f14ea861a9))
+
 ## [0.8.0](https://github.com/jbussdieker/bussdcc/compare/v0.7.0...v0.8.0) (2026-02-02)
 
 
