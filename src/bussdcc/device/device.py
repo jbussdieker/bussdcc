@@ -3,11 +3,13 @@ from bussdcc.context import ContextProtocol
 
 
 class Device(DeviceProtocol):
-    name: str = "unnamed"
+    kind: str = "device"
+    id: str
     ctx: ContextProtocol | None
     online: bool
 
-    def __init__(self) -> None:
+    def __init__(self, *, id: str) -> None:
+        self.id = id
         self.ctx = None
         self.online = False
 
@@ -17,11 +19,13 @@ class Device(DeviceProtocol):
             self.connect()
         except Exception as e:
             if self.ctx:
-                self.ctx.events.emit("device.failed", device=self.name, error=repr(e))
+                self.ctx.events.emit(
+                    "device.failed", device=self.id, kind=self.kind, error=repr(e)
+                )
             raise
         self.online = True
         if self.ctx:
-            self.ctx.events.emit("device.attached", device=self.name)
+            self.ctx.events.emit("device.attached", device=self.id, kind=self.kind)
 
     def detach(self) -> None:
         try:
@@ -29,7 +33,7 @@ class Device(DeviceProtocol):
         finally:
             self.online = False
             if self.ctx:
-                self.ctx.events.emit("device.detached", device=self.name)
+                self.ctx.events.emit("device.detached", device=self.id, kind=self.kind)
 
     def connect(self) -> None:
         """Open hardware / resources"""

@@ -29,11 +29,6 @@ class Runtime(RuntimeProtocol):
         self.version: str = get_version()
         self._service_supervisor: ServiceSupervisor | None = None
 
-    def register_device(self, device: DeviceProtocol) -> None:
-        if self._booted:
-            raise RuntimeError("Cannot register devices after boot")
-        self._devices[device.name] = device
-
     def register_service(self, service: ServiceProtocol) -> None:
         if self._booted:
             raise RuntimeError("Cannot register services after boot")
@@ -49,13 +44,36 @@ class Runtime(RuntimeProtocol):
             raise RuntimeError("Cannot register interfaces after boot")
         self._interfaces[interface.name] = interface
 
-    def get_device(self, name: str) -> DeviceProtocol | None:
-        """Retrieve a registered device by name."""
-        return self._devices.get(name)
+    def attach_device(self, device: DeviceProtocol) -> None:
+        """
+        Attach a device to the runtime.
 
-    def list_devices(self) -> list[str]:
-        """Return a list of registered device names."""
-        return list(self._devices.keys())
+        - If called before boot(), the device is staged and attached during boot.
+        - If called after boot(), the device is attached immediately.
+        """
+        if device.id in self._devices:
+            raise ValueError(f"Device {device.id} already attached")
+
+        if not self._booted:
+            self._devices[device.id] = device
+            return
+
+        device.attach(self.ctx)
+        self._devices[device.id] = device
+
+    def detach_device(self, id: str) -> None:
+        device = self._devices.pop(id, None)
+        if not device:
+            return
+        device.detach()
+
+    def get_device(self, id: str) -> DeviceProtocol | None:
+        return self._devices.get(id)
+
+    def list_devices(self, *, kind: str | None = None) -> list[DeviceProtocol]:
+        if kind is None:
+            return list(self._devices.values())
+        return [d for d in self._devices.values() if d.kind == kind]
 
     def boot(self) -> None:
         if self._booted:

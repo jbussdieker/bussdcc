@@ -17,10 +17,10 @@ from bussdcc.device import Device
 from bussdcc.process import Process
 from bussdcc.service import Service
 
-class MyDevice(Device):
-    name = "device1"
-    def connect(self): print("Device online")
-    def disconnect(self): print("Device offline")
+class MySensor(Device):
+    kind = "sensor"
+    def connect(self): print("Sensor online")
+    def disconnect(self): print("Sensor offline")
 
 class MyProcess(Process):
     name = "logger"
@@ -34,7 +34,7 @@ class MyService(Service):
         ctx.events.emit("heartbeat.tick")
 
 rt = Runtime()
-rt.register_device(MyDevice())
+rt.attach_device(MySensor(id="device1"))
 rt.register_process(MyProcess())
 rt.register_service(MyService())
 rt.boot()

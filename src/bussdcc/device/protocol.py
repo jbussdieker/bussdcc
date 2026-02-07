@@ -9,7 +9,8 @@ class DeviceProtocol(Protocol):
     Devices can attach to a context, manage their lifecycle, and report status.
     """
 
-    name: str
+    kind: str
+    id: str
     ctx: ContextProtocol | None
     online: bool
 
