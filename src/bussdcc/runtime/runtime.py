@@ -1,4 +1,5 @@
-from typing import Optional, Dict
+from typing import Optional, Dict, Self, Type, Literal
+from types import TracebackType
 
 from bussdcc.context import Context, ContextProtocol
 from bussdcc.clock import Clock, SystemClock
@@ -28,6 +29,25 @@ class Runtime(RuntimeProtocol):
         self._booted: bool = False
         self.version: str = get_version()
         self._service_supervisor: ServiceSupervisor | None = None
+
+    def __enter__(self) -> Self:
+        self.boot()
+
+        return self
+
+    def __exit__(
+        self,
+        exc_type: Optional[Type[BaseException]],
+        exc_val: Optional[BaseException],
+        exc_tb: Optional[TracebackType],
+    ) -> Literal[False]:
+        reason = None
+        if exc_type is not None:
+            reason = f"{exc_type.__name__}: {exc_val}"
+        self.shutdown(reason=reason)
+
+        # Returning False allows exceptions to propagate normally
+        return False
 
     def register_service(self, service: ServiceProtocol) -> None:
         if self._booted:
