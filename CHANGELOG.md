@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.11.0](https://github.com/jbussdieker/bussdcc/compare/v0.10.1...v0.11.0) (2026-02-08)
+
+
+### Features
+
+* publish to pypi ([913657f](https://github.com/jbussdieker/bussdcc/commit/913657f7c45b9a8038f884296725868638b22646))
+
+
+### Bug Fixes
+
+* expose event and state engine protocol ([ffa14e6](https://github.com/jbussdieker/bussdcc/commit/ffa14e6e4211d345034345f56e00a7fbea4007e9))
+
 ## [0.10.1](https://github.com/jbussdieker/bussdcc/compare/v0.10.0...v0.10.1) (2026-02-08)
 
 
