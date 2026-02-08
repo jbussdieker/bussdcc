@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.11.2](https://github.com/jbussdieker/bussdcc/compare/v0.11.1...v0.11.2) (2026-02-08)
+
+
+### Bug Fixes
+
+* add step id ([3cc2814](https://github.com/jbussdieker/bussdcc/commit/3cc2814630a22828e4fe56957e5e54006032d8f4))
+
 ## [0.11.1](https://github.com/jbussdieker/bussdcc/compare/v0.11.0...v0.11.1) (2026-02-08)
 
 
