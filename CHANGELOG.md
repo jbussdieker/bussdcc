@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.12.0](https://github.com/jbussdieker/bussdcc/compare/v0.11.2...v0.12.0) (2026-02-08)
+
+
+### Features
+
+* support dependency injection for state and events ([3dc87cb](https://github.com/jbussdieker/bussdcc/commit/3dc87cbea582cf5fddefe819af6731bc2089435c))
+
 ## [0.11.2](https://github.com/jbussdieker/bussdcc/compare/v0.11.1...v0.11.2) (2026-02-08)
 
 
