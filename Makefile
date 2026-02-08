@@ -1,4 +1,4 @@
-.PHONY: setup check typecheck lint format clean
+.PHONY: build setup check typecheck lint format clean
 
 setup: .venv/bin/python
 	.venv/bin/python -m pip install -e .
@@ -9,12 +9,24 @@ lint: .venv/bin/black
 	.venv/bin/black --check .
 format: .venv/bin/black
 	.venv/bin/black .
+build: .venv/bin/build
+	.venv/bin/python -m build .
+build-check: .venv/bin/twine
+	.venv/bin/twine check dist/*
+publish-testpypi: .venv/bin/twine
+	.venv/bin/twine upload --repository testpypi dist/*
+publish: .venv/bin/twine
+	.venv/bin/twine upload dist/*
 clean:
-	rm -rf .venv
+	rm -rf dist build .venv
 .venv/bin/mypy: .venv/bin/python
 	.venv/bin/pip install mypy
+.venv/bin/build: .venv/bin/python
+	.venv/bin/pip install build
 .venv/bin/black: .venv/bin/python
 	.venv/bin/pip install black
+.venv/bin/twine: .venv/bin/python
+	.venv/bin/pip install twine
 .venv/bin/python:
 	python3 -m venv --system-site-packages .venv
 
