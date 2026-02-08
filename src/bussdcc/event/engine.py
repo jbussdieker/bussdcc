@@ -1,6 +1,4 @@
-from typing import Callable, Deque, Any
-from collections import deque
-from dataclasses import dataclass
+from typing import Callable, Any
 import threading
 
 from bussdcc.clock import Clock
@@ -24,7 +22,6 @@ class EventEngine:
     def __init__(self, clock: Clock, max_events: int = 1000) -> None:
         self.clock = clock
         self._lock = threading.RLock()
-        self._events: Deque[Event] = deque(maxlen=max_events)
         self._subs: list[Callable[[Event], None]] = []
 
     def subscribe(self, fn: Callable[[Event], None]) -> Subscription:
@@ -45,23 +42,24 @@ class EventEngine:
         )
 
         with self._lock:
-            self._events.appendleft(evt)
             subs = list(self._subs)
+
+        errors = []
 
         for fn in subs:
             try:
                 fn(evt)
             except Exception as e:
-                err_evt = Event(
-                    time=self.clock.now_utc().isoformat(),
-                    name="event.subscriber_error",
-                    data={"error": repr(e)},
+                errors.append(
+                    {
+                        "event": evt.name,
+                        "subscriber": repr(fn),
+                        "error": repr(e),
+                    }
                 )
-                with self._lock:
-                    self._events.appendleft(err_evt)
+
+        if name != "event.subscriber_error":
+            for error in errors:
+                self.emit("event.subscriber_error", **error)
 
         return evt
-
-    def recent(self, n: int = 10) -> list[Event]:
-        with self._lock:
-            return list(self._events)[:n]

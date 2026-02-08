@@ -4,8 +4,8 @@ from types import TracebackType
 from bussdcc.context import Context, ContextProtocol
 from bussdcc.clock import Clock, SystemClock
 from bussdcc.device import DeviceProtocol
-from bussdcc.event import EventEngine
-from bussdcc.state import StateEngine
+from bussdcc.event import EventEngine, EventEngineProtocol
+from bussdcc.state import StateEngine, StateEngineProtocol
 from bussdcc.service import ServiceProtocol, ServiceSupervisor
 from bussdcc.process import ProcessProtocol
 from bussdcc.version import get_version
@@ -14,10 +14,16 @@ from .protocol import RuntimeProtocol
 
 
 class Runtime(RuntimeProtocol):
-    def __init__(self, *, clock: Optional[Clock] = None):
+    def __init__(
+        self,
+        *,
+        clock: Optional[Clock] = None,
+        events: EventEngineProtocol | None = None,
+        state: StateEngineProtocol | None = None,
+    ):
         self.clock: Clock = clock or SystemClock()
-        self.events = EventEngine(clock=self.clock)
-        self.state = StateEngine()
+        self.events: EventEngineProtocol = events or EventEngine(clock=self.clock)
+        self.state: StateEngineProtocol = state or StateEngine()
         self._devices: Dict[str, DeviceProtocol] = {}
         self._services: Dict[str, ServiceProtocol] = {}
         self._processes: Dict[str, ProcessProtocol] = {}
