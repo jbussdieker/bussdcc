@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.0](https://github.com/jbussdieker/bussdcc/compare/v0.9.0...v0.10.0) (2026-02-08)
+
+
+### Features
+
+* make runtime a context handler ([ca11faf](https://github.com/jbussdieker/bussdcc/commit/ca11fafca52a16417862eba820eea69af71356db))
+
 ## [0.9.0](https://github.com/jbussdieker/bussdcc/compare/v0.8.0...v0.9.0) (2026-02-07)
 
 
