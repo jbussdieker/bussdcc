@@ -1,3 +1,7 @@
 from .engine import StateEngine
+from .protocol import StateEngineProtocol
 
-__all__ = ["StateEngine"]
+__all__ = [
+    "StateEngine",
+    "StateEngineProtocol",
+]
