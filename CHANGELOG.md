@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.1](https://github.com/jbussdieker/bussdcc/compare/v0.10.0...v0.10.1) (2026-02-08)
+
+
+### Bug Fixes
+
+* add py.typed marker ([d580bd7](https://github.com/jbussdieker/bussdcc/commit/d580bd7c77a7fc1c0563a3be4c4db7a041907d0a))
+
 ## [0.10.0](https://github.com/jbussdieker/bussdcc/compare/v0.9.0...v0.10.0) (2026-02-08)
 
 
