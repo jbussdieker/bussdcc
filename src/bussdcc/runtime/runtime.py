@@ -139,24 +139,33 @@ class Runtime(RuntimeProtocol):
         self.ctx.events.emit("system.booted", version=self.version)
 
     def shutdown(self, reason: Optional[str] = None) -> None:
-        self.ctx.events.emit("system.shutting_down", reason=reason)
+        if not self._booted:
+            return  # Be idempotent on shutdown to avoid exit crashes
 
-        # Stop services first
-        if self._service_supervisor:
-            self._service_supervisor.stop_all()
+        try:
+            self.ctx.events.emit("system.shutting_down", reason=reason)
 
-        # Detach interfaces
-        for interface in self._interfaces.values():
-            interface.detach()
+            # Stop services first
+            if self._service_supervisor:
+                self._service_supervisor.stop_all()
 
-        # Detach processes
-        for process in self._processes.values():
-            process.detach()
+            # Detach interfaces
+            for interface in self._interfaces.values():
+                interface.detach()
 
-        # Detach devices in reverse order
-        for device in reversed(list(self._devices.values())):
-            device.detach()
+            # Detach processes
+            for process in self._processes.values():
+                process.detach()
 
-        self._on_shutdown(reason)
+            # Detach devices in reverse order
+            for device in reversed(list(self._devices.values())):
+                device.detach()
 
-        self.ctx.events.emit("system.shutdown")
+            self._on_shutdown(reason)
+
+            self.ctx.events.emit("system.shutdown")
+        except Exception:
+            raise
+        finally:
+            # Ensure state is reset even if on_shutdown fails
+            self._booted = False
