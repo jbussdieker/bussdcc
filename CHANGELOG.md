@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.14.0](https://github.com/jbussdieker/bussdcc/compare/v0.13.0...v0.14.0) (2026-02-09)
+
+
+### Features
+
+* **runtime:** add lifecycle hooks for boot and shutdown ([13a9958](https://github.com/jbussdieker/bussdcc/commit/13a9958ce5bab2c5e299fc8e35463f56de61247c))
+
 ## [0.13.0](https://github.com/jbussdieker/bussdcc/compare/v0.12.0...v0.13.0) (2026-02-09)
 
 
