@@ -36,6 +36,14 @@ class Runtime(RuntimeProtocol):
         self.version: str = get_version()
         self._service_supervisor: ServiceSupervisor | None = None
 
+    def _on_boot(self) -> None:
+        """Hook for subclasses to initialize resources."""
+        return None
+
+    def _on_shutdown(self, reason: Optional[str] = None) -> None:
+        """Hook for subclasses to release resources."""
+        return None
+
     def __enter__(self) -> Self:
         self.boot()
 
@@ -107,6 +115,8 @@ class Runtime(RuntimeProtocol):
 
         self.ctx.events.emit("system.booting", version=self.version)
 
+        self._on_boot()
+
         # Boot all registered devices
         for device in self._devices.values():
             device.attach(self.ctx)
@@ -146,5 +156,7 @@ class Runtime(RuntimeProtocol):
         # Detach devices in reverse order
         for device in reversed(list(self._devices.values())):
             device.detach()
+
+        self._on_shutdown(reason)
 
         self.ctx.events.emit("system.shutdown")
