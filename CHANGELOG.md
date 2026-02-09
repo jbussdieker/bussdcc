@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.13.0](https://github.com/jbussdieker/bussdcc/compare/v0.12.0...v0.13.0) (2026-02-09)
+
+
+### Features
+
+* **event:** enhance event engine with protocol support ([8c9cca9](https://github.com/jbussdieker/bussdcc/commit/8c9cca9e0741cb36d891e5ccdd31c0922055ac64))
+
 ## [0.12.0](https://github.com/jbussdieker/bussdcc/compare/v0.11.2...v0.12.0) (2026-02-08)
 
 
