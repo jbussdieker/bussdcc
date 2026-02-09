@@ -1,11 +1,15 @@
 from typing import Protocol, Callable, Any
 
 from .event import Event
-from .engine import Subscription
 
 EventHandler = Callable[[Event], None]
 
 
+class SubscriptionProtocol(Protocol):
+    def cancel(self) -> None: ...
+
+
 class EventEngineProtocol(Protocol):
     def emit(self, name: str, **data: Any) -> Event: ...
-    def subscribe(self, handler: EventHandler) -> Subscription: ...
+    def subscribe(self, handler: EventHandler) -> SubscriptionProtocol: ...
+    def unsubscribe(self, fn: EventHandler) -> None: ...

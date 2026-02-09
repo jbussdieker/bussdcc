@@ -1,35 +1,36 @@
-from typing import Callable, Any
+from typing import Any
 import threading
 
 from bussdcc.clock import Clock
 
 from .event import Event
+from .protocol import EventHandler, SubscriptionProtocol, EventEngineProtocol
 
 
 class Subscription:
-    def __init__(self, engine: "EventEngine", fn: Callable[[Event], None]):
+    def __init__(self, engine: EventEngineProtocol, fn: EventHandler):
         self._engine = engine
         self._fn = fn
         self._active = True
 
     def cancel(self) -> None:
         if self._active:
-            self._engine._unsubscribe(self._fn)
+            self._engine.unsubscribe(self._fn)
             self._active = False
 
 
 class EventEngine:
-    def __init__(self, clock: Clock, max_events: int = 1000) -> None:
+    def __init__(self, clock: Clock) -> None:
         self.clock = clock
         self._lock = threading.RLock()
-        self._subs: list[Callable[[Event], None]] = []
+        self._subs: list[EventHandler] = []
 
-    def subscribe(self, fn: Callable[[Event], None]) -> Subscription:
+    def subscribe(self, fn: EventHandler) -> SubscriptionProtocol:
         with self._lock:
             self._subs.append(fn)
         return Subscription(self, fn)
 
-    def _unsubscribe(self, fn: Callable[[Event], None]) -> None:
+    def unsubscribe(self, fn: EventHandler) -> None:
         with self._lock:
             if fn in self._subs:
                 self._subs.remove(fn)
