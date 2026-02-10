@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.16.1](https://github.com/jbussdieker/bussdcc/compare/v0.16.0...v0.16.1) (2026-02-10)
+
+
+### Bug Fixes
+
+* **runtime:** move ThreadedRuntime stop event init to constructor ([a255637](https://github.com/jbussdieker/bussdcc/commit/a2556371c516426083a82cd177b100babea1373a))
+
 ## [0.16.0](https://github.com/jbussdieker/bussdcc/compare/v0.15.1...v0.16.0) (2026-02-10)
 
 
