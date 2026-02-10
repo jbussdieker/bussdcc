@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.15.1](https://github.com/jbussdieker/bussdcc/compare/v0.15.0...v0.15.1) (2026-02-10)
+
+
+### Bug Fixes
+
+* **device, process, runtime:** improve error handling and context management ([c110e11](https://github.com/jbussdieker/bussdcc/commit/c110e111d846bdbc9c608170392b4cefbcf574cc))
+
 ## [0.15.0](https://github.com/jbussdieker/bussdcc/compare/v0.14.0...v0.15.0) (2026-02-10)
 
 
