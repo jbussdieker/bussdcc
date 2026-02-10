@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.16.0](https://github.com/jbussdieker/bussdcc/compare/v0.15.1...v0.16.0) (2026-02-10)
+
+
+### Features
+
+* **runtime:** introduce ThreadedRuntime and SignalRuntime classes ([a0ba8b2](https://github.com/jbussdieker/bussdcc/commit/a0ba8b2286b804d906120e85369fb76730360c38))
+
 ## [0.15.1](https://github.com/jbussdieker/bussdcc/compare/v0.15.0...v0.15.1) (2026-02-10)
 
 
