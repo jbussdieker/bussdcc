@@ -30,6 +30,11 @@ class Device(DeviceProtocol):
     def detach(self) -> None:
         try:
             self.disconnect()
+        except Exception as e:
+            if self.ctx:
+                self.ctx.events.emit(
+                    "device.failed", device=self.id, kind=self.kind, error=repr(e)
+                )
         finally:
             self.online = False
             if self.ctx:

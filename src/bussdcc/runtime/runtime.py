@@ -136,14 +136,14 @@ class Runtime(RuntimeProtocol):
         for interface in self._interfaces.values():
             interface.attach(self.ctx)
 
+        self._booted = True
+        self.ctx.events.emit("system.booted", version=self.version)
+
         # Start services under supervisor
         self._service_supervisor = ServiceSupervisor(self.ctx)
         for service in self._services.values():
             self._service_supervisor.register(service)
         self._service_supervisor.start_all()
-
-        self._booted = True
-        self.ctx.events.emit("system.booted", version=self.version)
 
     def shutdown(self, reason: Optional[str] = None) -> None:
         if not self._booted:

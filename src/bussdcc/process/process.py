@@ -8,6 +8,7 @@ from .protocol import ProcessProtocol
 
 class Process(ProcessProtocol):
     name = "unnamed"
+    ctx: ContextProtocol
 
     def _on_event(self, evt: Event) -> None:
         try:
