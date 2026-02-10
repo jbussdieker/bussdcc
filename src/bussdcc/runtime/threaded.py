@@ -1,6 +1,10 @@
 import threading
 from typing import Optional
 
+from bussdcc.clock import Clock
+from bussdcc.event import EventEngineProtocol
+from bussdcc.state import StateEngineProtocol
+
 from .runtime import Runtime
 
 
@@ -13,9 +17,15 @@ class ThreadedRuntime(Runtime):
     - No OS signals required
     """
 
-    def _on_boot(self) -> None:
+    def __init__(
+        self,
+        *,
+        clock: Optional[Clock] = None,
+        events: EventEngineProtocol | None = None,
+        state: StateEngineProtocol | None = None,
+    ):
+        super().__init__(clock=clock, events=events, state=state)
         self._stop_event = threading.Event()
-        super()._on_boot()
 
     def run(self) -> None:
         """
