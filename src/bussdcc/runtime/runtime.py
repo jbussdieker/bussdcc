@@ -44,6 +44,9 @@ class Runtime(RuntimeProtocol):
         """Hook for subclasses to release resources."""
         return None
 
+    def __repr__(self) -> str:
+        return f"<{self.__class__.__name__} booted={self._booted}>"
+
     def __enter__(self) -> Self:
         self.boot()
 
@@ -62,6 +65,10 @@ class Runtime(RuntimeProtocol):
 
         # Returning False allows exceptions to propagate normally
         return False
+
+    @property
+    def booted(self) -> bool:
+        return self._booted
 
     def register_service(self, service: ServiceProtocol) -> None:
         if self._booted:
@@ -163,7 +170,7 @@ class Runtime(RuntimeProtocol):
 
             self._on_shutdown(reason)
 
-            self.ctx.events.emit("system.shutdown")
+            self.ctx.events.emit("system.shutdown", version=self.version)
         except Exception:
             raise
         finally:
