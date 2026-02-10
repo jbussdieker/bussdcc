@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.15.0](https://github.com/jbussdieker/bussdcc/compare/v0.14.0...v0.15.0) (2026-02-10)
+
+
+### Features
+
+* **runtime:** enhance runtime protocol and representation ([c0a510a](https://github.com/jbussdieker/bussdcc/commit/c0a510a4281512cf998ce229b0fa9b81f3f4e52c))
+
+
+### Bug Fixes
+
+* **runtime:** add property decorator ([eeefe94](https://github.com/jbussdieker/bussdcc/commit/eeefe9421d31d8234d5752566877dedde4c57176))
+* **runtime:** ensure idempotent shutdown process ([ce9a1a6](https://github.com/jbussdieker/bussdcc/commit/ce9a1a6ffd8cf44b39bfd32386d3b0c0654a6fdd))
+
 ## [0.14.0](https://github.com/jbussdieker/bussdcc/compare/v0.13.0...v0.14.0) (2026-02-09)
 
 
