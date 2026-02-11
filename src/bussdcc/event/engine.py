@@ -37,7 +37,7 @@ class EventEngine:
 
     def emit(self, name: str, **data: Any) -> Event:
         evt = Event(
-            time=self.clock.now_utc().isoformat(),
+            time=self.clock.now_utc(),
             name=name,
             data=data,
         )
