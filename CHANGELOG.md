@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.18.1](https://github.com/jbussdieker/bussdcc/compare/v0.18.0...v0.18.1) (2026-02-11)
+
+
+### Bug Fixes
+
+* **event, runtime:** restructure EventSink implementation ([ec6d869](https://github.com/jbussdieker/bussdcc/commit/ec6d8697655fc39acce17d4ab3e006b33993dc0d))
+
 ## [0.18.0](https://github.com/jbussdieker/bussdcc/compare/v0.17.0...v0.18.0) (2026-02-11)
 
 
