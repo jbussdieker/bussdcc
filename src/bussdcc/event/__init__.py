@@ -1,9 +1,10 @@
 from .engine import Subscription, EventEngine
-from .protocol import EventHandler, EventEngineProtocol, SubscriptionProtocol
+from .protocol import EventSink, EventHandler, EventEngineProtocol, SubscriptionProtocol
 from .event import Event
 
 __all__ = [
     "Event",
+    "EventSink",
     "EventHandler",
     "EventEngine",
     "EventEngineProtocol",

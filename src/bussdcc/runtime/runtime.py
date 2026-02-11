@@ -4,7 +4,7 @@ from types import TracebackType
 from bussdcc.context import Context, ContextProtocol
 from bussdcc.clock import Clock, SystemClock
 from bussdcc.device import DeviceProtocol
-from bussdcc.event import EventEngine, EventEngineProtocol
+from bussdcc.event import Event, EventSink, EventEngine, EventEngineProtocol
 from bussdcc.state import StateEngine, StateEngineProtocol
 from bussdcc.service import ServiceProtocol, ServiceSupervisor
 from bussdcc.process import ProcessProtocol
@@ -24,6 +24,7 @@ class Runtime(RuntimeProtocol):
         self.clock: Clock = clock or SystemClock()
         self.events: EventEngineProtocol = events or EventEngine(clock=self.clock)
         self.state: StateEngineProtocol = state or StateEngine()
+        self._sinks: list[EventSink] = []
         self._devices: Dict[str, DeviceProtocol] = {}
         self._services: Dict[str, ServiceProtocol] = {}
         self._processes: Dict[str, ProcessProtocol] = {}
@@ -43,6 +44,16 @@ class Runtime(RuntimeProtocol):
     def _on_shutdown(self, reason: Optional[str] = None) -> None:
         """Hook for subclasses to release resources."""
         return None
+
+    def _dispatch(self, evt: Event) -> None:
+        for sink in self._sinks:
+            try:
+                sink.handle(evt)
+            except Exception as e:
+                if evt.name != "system.sink.failure":
+                    self.events.emit(
+                        "system.sink.failure", sink=type(sink).__name__, error=repr(e)
+                    )
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} booted={self._booted}>"
@@ -69,6 +80,11 @@ class Runtime(RuntimeProtocol):
     @property
     def booted(self) -> bool:
         return self._booted
+
+    def add_sink(self, sink: EventSink) -> None:
+        if self._booted:
+            raise RuntimeError("Cannot add sinks after boot")
+        self._sinks.append(sink)
 
     def register_service(self, service: ServiceProtocol) -> None:
         if self._booted:
@@ -119,6 +135,11 @@ class Runtime(RuntimeProtocol):
     def boot(self) -> None:
         if self._booted:
             return
+
+        self._sub = self.events.subscribe(self._dispatch)
+
+        for sink in self._sinks:
+            sink.start(self.ctx)
 
         self.ctx.events.emit("system.booting", version=self.version)
 
@@ -171,6 +192,11 @@ class Runtime(RuntimeProtocol):
             self._on_shutdown(reason)
 
             self.ctx.events.emit("system.shutdown", version=self.version)
+
+            self._sub.cancel()
+
+            for sink in reversed(self._sinks):
+                sink.stop()
         except Exception:
             raise
         finally:

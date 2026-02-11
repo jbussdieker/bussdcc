@@ -1,5 +1,7 @@
 from typing import Protocol, Callable, Any
 
+from bussdcc.context import ContextProtocol
+
 from .event import Event
 
 EventHandler = Callable[[Event], None]
@@ -7,6 +9,12 @@ EventHandler = Callable[[Event], None]
 
 class SubscriptionProtocol(Protocol):
     def cancel(self) -> None: ...
+
+
+class EventSink(Protocol):
+    def start(self, ctx: ContextProtocol) -> None: ...
+    def stop(self) -> None: ...
+    def handle(self, evt: Event) -> None: ...
 
 
 class EventEngineProtocol(Protocol):
