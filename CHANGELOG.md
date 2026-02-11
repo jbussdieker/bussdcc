@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.18.0](https://github.com/jbussdieker/bussdcc/compare/v0.17.0...v0.18.0) (2026-02-11)
+
+
+### Features
+
+* **event, runtime:** introduce EventSink and enhance event handling ([af1a421](https://github.com/jbussdieker/bussdcc/commit/af1a421d77ffec5fb257be45d7ce91c44d99dea3))
+
 ## [0.17.0](https://github.com/jbussdieker/bussdcc/compare/v0.16.1...v0.17.0) (2026-02-11)
 
 
