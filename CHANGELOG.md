@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.17.0](https://github.com/jbussdieker/bussdcc/compare/v0.16.1...v0.17.0) (2026-02-11)
+
+
+### Features
+
+* **event:** update Event time attribute to datetime ([b9eff86](https://github.com/jbussdieker/bussdcc/commit/b9eff8637cc01b61b319414591a11df5dd8c5739))
+
 ## [0.16.1](https://github.com/jbussdieker/bussdcc/compare/v0.16.0...v0.16.1) (2026-02-10)
 
 
