@@ -4,13 +4,14 @@ from types import TracebackType
 from bussdcc.context import Context, ContextProtocol
 from bussdcc.clock import Clock, SystemClock
 from bussdcc.device import DeviceProtocol
-from bussdcc.event import Event, EventSink, EventEngine, EventEngineProtocol
+from bussdcc.event import Event, EventEngine, EventEngineProtocol
 from bussdcc.state import StateEngine, StateEngineProtocol
 from bussdcc.service import ServiceProtocol, ServiceSupervisor
 from bussdcc.process import ProcessProtocol
 from bussdcc.version import get_version
 
 from .protocol import RuntimeProtocol
+from .sink import EventSink
 
 
 class Runtime(RuntimeProtocol):
