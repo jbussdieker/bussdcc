@@ -203,32 +203,6 @@ Supervisor events:
 * `service.restart`
 * `service.critical_failure`
 
-### Policies
-
-Policies answer a single question:
-
-> **“Should this happen?”**
-
-They are **pure evaluators**, not controllers.
-
-```python
-class MyPolicy:
-    name = "office_hours"
-
-    def evaluate(self, ctx, evt=None) -> bool:
-        hour = ctx.clock.now_utc().hour
-        return 9 <= hour < 17
-```
-
-Key properties:
-
-* No lifecycle
-* No side effects
-* No authority
-* Callable by any component
-
-Policies are **consulted**, never enforced by the runtime.
-
 ## What bussdcc Is (and Isn’t)
 
 **It is:**
