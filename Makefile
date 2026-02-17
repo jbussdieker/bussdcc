@@ -4,7 +4,7 @@ setup: .venv/bin/python
 	.venv/bin/python -m pip install -e .
 check: typecheck lint
 typecheck: .venv/bin/mypy
-	.venv/bin/mypy --strict src
+	.venv/bin/mypy --strict -p bussdcc
 lint: .venv/bin/black
 	.venv/bin/black --check .
 format: .venv/bin/black
