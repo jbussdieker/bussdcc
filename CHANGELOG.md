@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.20.1](https://github.com/jbussdieker/bussdcc/compare/v0.20.0...v0.20.1) (2026-02-18)
+
+
+### Bug Fixes
+
+* **event:** update type hint for EventEngine in _Subscription ([34ddf06](https://github.com/jbussdieker/bussdcc/commit/34ddf06be5070a860d1a29f44bcbd2bee3548b8c))
+
 ## [0.20.0](https://github.com/jbussdieker/bussdcc/compare/v0.19.0...v0.20.0) (2026-02-18)
 
 
