@@ -1,4 +1,4 @@
-from typing import Any
+from typing import List, Any
 import threading
 
 from bussdcc.clock import Clock
@@ -7,33 +7,43 @@ from .event import Event
 from .protocol import EventHandler, SubscriptionProtocol, EventEngineProtocol
 
 
-class Subscription:
-    def __init__(self, engine: EventEngineProtocol, fn: EventHandler):
+class _Subscription:
+    def __init__(self, engine: EventEngine, handler: EventHandler):
         self._engine = engine
-        self._fn = fn
-        self._active = True
+        self._handler = handler
+        self._cancelled = False
 
     def cancel(self) -> None:
-        if self._active:
-            self._engine.unsubscribe(self._fn)
-            self._active = False
+        if not self._cancelled:
+            self._engine._unsubscribe(self)
+            self._cancelled = True
+
+    @property
+    def handler(self) -> EventHandler:
+        return self._handler
 
 
 class EventEngine:
     def __init__(self, clock: Clock) -> None:
         self.clock = clock
         self._lock = threading.RLock()
-        self._subs: list[EventHandler] = []
+        self._subscriptions: List[_Subscription] = []
 
-    def subscribe(self, fn: EventHandler) -> SubscriptionProtocol:
+    def subscribe(self, handler: EventHandler) -> SubscriptionProtocol:
+        sub = _Subscription(self, handler)
         with self._lock:
-            self._subs.append(fn)
-        return Subscription(self, fn)
+            self._subscriptions.append(sub)
+        return sub
 
-    def unsubscribe(self, fn: EventHandler) -> None:
+    def _unsubscribe(self, subscription: _Subscription) -> None:
         with self._lock:
-            if fn in self._subs:
-                self._subs.remove(fn)
+            try:
+                self._subscriptions.remove(subscription)
+            except ValueError:
+                pass
+
+    def unsubscribe(self, subscription: SubscriptionProtocol) -> None:
+        subscription.cancel()
 
     def emit(self, name: str, **data: Any) -> Event:
         evt = Event(
@@ -43,18 +53,18 @@ class EventEngine:
         )
 
         with self._lock:
-            subs = list(self._subs)
+            subs = list(self._subscriptions)
 
         errors = []
 
-        for fn in subs:
+        for sub in subs:
             try:
-                fn(evt)
+                sub.handler(evt)
             except Exception as e:
                 errors.append(
                     {
                         "event": evt.name,
-                        "subscriber": repr(fn),
+                        "subscriber": repr(sub.handler),
                         "error": repr(e),
                     }
                 )

@@ -1,4 +1,4 @@
-from .engine import Subscription, EventEngine
+from .engine import EventEngine
 from .protocol import EventHandler, EventEngineProtocol, SubscriptionProtocol
 from .event import Event
 
@@ -7,6 +7,5 @@ __all__ = [
     "EventHandler",
     "EventEngine",
     "EventEngineProtocol",
-    "Subscription",
     "SubscriptionProtocol",
 ]
