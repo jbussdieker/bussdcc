@@ -51,9 +51,9 @@ class Runtime(RuntimeProtocol):
             try:
                 sink.handle(evt)
             except Exception as e:
-                if evt.name != "system.sink.failure":
+                if evt.name != "runtime.sink.failure":
                     self.events.emit(
-                        "system.sink.failure", sink=type(sink).__name__, error=repr(e)
+                        "runtime.sink.failure", sink=type(sink).__name__, error=repr(e)
                     )
 
     def __repr__(self) -> str:
@@ -142,7 +142,7 @@ class Runtime(RuntimeProtocol):
         for sink in self._sinks:
             sink.start(self.ctx)
 
-        self.ctx.events.emit("system.booting", version=self.version)
+        self.ctx.events.emit("runtime.booting", version=self.version)
 
         self._on_boot()
 
@@ -154,16 +154,14 @@ class Runtime(RuntimeProtocol):
         for process in self._processes.values():
             process.attach(self.ctx)
             process.start(self.ctx)
-            self.ctx.events.emit("process.started", process=process.name)
 
         # Attach interfaces
         for interface in self._interfaces.values():
             interface.attach(self.ctx)
             interface.start(self.ctx)
-            self.ctx.events.emit("interface.started", interface=interface.name)
 
         self._booted = True
-        self.ctx.events.emit("system.booted", version=self.version)
+        self.ctx.events.emit("runtime.booted", version=self.version)
 
         # Start services under supervisor
         self._service_supervisor = ServiceSupervisor(self.ctx)
@@ -178,7 +176,7 @@ class Runtime(RuntimeProtocol):
             return  # Be idempotent on shutdown to avoid exit crashes
 
         try:
-            self.ctx.events.emit("system.shutting_down", reason=reason)
+            self.ctx.events.emit("runtime.shutting_down", reason=reason)
 
             # Stop services first then detach
             if self._service_supervisor:
@@ -193,7 +191,6 @@ class Runtime(RuntimeProtocol):
                     interface.stop(self.ctx)
                 finally:
                     interface.detach()
-                    self.ctx.events.emit("interface.stopped", interface=interface.name)
 
             # Stop and detach processes
             for process in self._processes.values():
@@ -201,7 +198,6 @@ class Runtime(RuntimeProtocol):
                     process.stop(self.ctx)
                 finally:
                     process.detach()
-                    self.ctx.events.emit("process.stopped", process=process.name)
 
             # Detach devices in reverse order
             for device in reversed(list(self._devices.values())):
@@ -209,7 +205,7 @@ class Runtime(RuntimeProtocol):
 
             self._on_shutdown(reason)
 
-            self.ctx.events.emit("system.shutdown", version=self.version)
+            self.ctx.events.emit("runtime.shutdown", version=self.version)
 
             self._sub.cancel()
 
