@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.20.0](https://github.com/jbussdieker/bussdcc/compare/v0.19.0...v0.20.0) (2026-02-18)
+
+
+### Features
+
+* **service:** add event handling support ([26590c0](https://github.com/jbussdieker/bussdcc/commit/26590c0c006bfc73792bdb6336f6b5972b1d9a83))
+
 ## [0.19.0](https://github.com/jbussdieker/bussdcc/compare/v0.18.1...v0.19.0) (2026-02-18)
 
 
