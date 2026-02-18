@@ -8,7 +8,7 @@ from .protocol import EventHandler, SubscriptionProtocol, EventEngineProtocol
 
 
 class _Subscription:
-    def __init__(self, engine: EventEngine, handler: EventHandler):
+    def __init__(self, engine: "EventEngine", handler: EventHandler):
         self._engine = engine
         self._handler = handler
         self._cancelled = False
