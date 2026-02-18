@@ -63,10 +63,10 @@ The **Runtime** coordinates the system:
 * Constructs the shared `Context`
 * Emits lifecycle events:
 
-  * `system.booting`
-  * `system.booted`
-  * `system.shutting_down`
-  * `system.shutdown`
+  * `runtime.booting`
+  * `runtime.booted`
+  * `runtime.shutting_down`
+  * `runtime.shutdown`
 
 Boot order is **deterministic**:
 
@@ -119,8 +119,8 @@ This is **coordination**, not messaging middleware.
 Thread-safe hierarchical state engine with dot-path access:
 
 ```python
-ctx.state.set("system.clock.uptime", 42)
-ctx.state.get("system.clock.uptime")
+ctx.state.set("runtime.clock.uptime", 42)
+ctx.state.get("runtime.clock.uptime")
 ```
 
 * No schema enforcement
