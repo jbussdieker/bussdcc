@@ -46,7 +46,15 @@ class ServiceSupervisor:
                         and not self._stop_flag.is_set()
                     ):
                         service.tick(self.ctx)
-                        self.ctx.clock.sleep(getattr(service, "interval", 1.0))
+                        interval = getattr(service, "interval", 1.0)
+
+                        interrupted = self.ctx.clock.sleep(
+                            interval,
+                            cancel=self._stop_flag,
+                        )
+
+                        if interrupted:
+                            break
                 except Exception as e:
                     self.ctx.events.emit(
                         "service.error",

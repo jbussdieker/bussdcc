@@ -1,3 +1,4 @@
+import threading
 from datetime import datetime, timezone
 import time
 
@@ -17,5 +18,22 @@ class SystemClock(Clock):
     def uptime(self) -> float:
         return time.monotonic() - self._origin
 
-    def sleep(self, seconds: float) -> None:
-        time.sleep(seconds)
+    def sleep(
+        self,
+        seconds: float,
+        cancel: threading.Event | None = None,
+    ) -> bool:
+        if cancel is None:
+            time.sleep(seconds)
+            return False
+
+        deadline = self.monotonic() + seconds
+
+        while True:
+            remaining = deadline - self.monotonic()
+            if remaining <= 0:
+                return False  # normal wake
+
+            # wait at most 0.5s so cancellation is responsive
+            if cancel.wait(min(remaining, 0.5)):
+                return True  # interrupted
