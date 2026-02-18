@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.19.0](https://github.com/jbussdieker/bussdcc/compare/v0.18.1...v0.19.0) (2026-02-18)
+
+
+### Features
+
+* **clock, supervisor:** add cancellable sleep functionality ([49b21bc](https://github.com/jbussdieker/bussdcc/commit/49b21bcd262bd2e4a6e9b752ed0d1d1f19e05699))
+
 ## [0.18.1](https://github.com/jbussdieker/bussdcc/compare/v0.18.0...v0.18.1) (2026-02-11)
 
 
