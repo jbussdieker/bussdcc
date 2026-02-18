@@ -153,10 +153,14 @@ class Runtime(RuntimeProtocol):
         # Attach processes
         for process in self._processes.values():
             process.attach(self.ctx)
+            process.start(self.ctx)
+            self.ctx.events.emit("process.started", process=process.name)
 
         # Attach interfaces
         for interface in self._interfaces.values():
             interface.attach(self.ctx)
+            interface.start(self.ctx)
+            self.ctx.events.emit("interface.started", interface=interface.name)
 
         self._booted = True
         self.ctx.events.emit("system.booted", version=self.version)
@@ -164,7 +168,9 @@ class Runtime(RuntimeProtocol):
         # Start services under supervisor
         self._service_supervisor = ServiceSupervisor(self.ctx)
         for service in self._services.values():
+            service.attach(self.ctx)
             self._service_supervisor.register(service)
+
         self._service_supervisor.start_all()
 
     def shutdown(self, reason: Optional[str] = None) -> None:
@@ -174,17 +180,28 @@ class Runtime(RuntimeProtocol):
         try:
             self.ctx.events.emit("system.shutting_down", reason=reason)
 
-            # Stop services first
+            # Stop services first then detach
             if self._service_supervisor:
                 self._service_supervisor.stop_all()
 
-            # Detach interfaces
-            for interface in self._interfaces.values():
-                interface.detach()
+            for service in self._services.values():
+                service.detach()
 
-            # Detach processes
+            # Stop and detach interfaces
+            for interface in self._interfaces.values():
+                try:
+                    interface.stop(self.ctx)
+                finally:
+                    interface.detach()
+                    self.ctx.events.emit("interface.stopped", interface=interface.name)
+
+            # Stop and detach processes
             for process in self._processes.values():
-                process.detach()
+                try:
+                    process.stop(self.ctx)
+                finally:
+                    process.detach()
+                    self.ctx.events.emit("process.stopped", process=process.name)
 
             # Detach devices in reverse order
             for device in reversed(list(self._devices.values())):

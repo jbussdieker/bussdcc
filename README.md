@@ -24,7 +24,7 @@ class MySensor(Device):
 
 class MyProcess(Process):
     name = "logger"
-    def on_event(self, ctx, evt):
+    def handle_event(self, ctx, evt):
         print(evt.name, evt.data)
 
 class MyService(Service):
@@ -159,9 +159,9 @@ They:
 Lifecycle hooks:
 
 * `attach(ctx)`
-* `on_start(ctx)`
-* `on_event(ctx, evt)`
-* `on_stop(ctx)`
+* `start(ctx)`
+* `handle_event(ctx, evt)`
+* `stop(ctx)`
 * `detach()`
 
 Errors are isolated and reported as `process.error`.

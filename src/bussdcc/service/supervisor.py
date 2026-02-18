@@ -28,10 +28,6 @@ class ServiceSupervisor:
 
     def stop_all(self) -> None:
         self._stop_flag.set()
-        for service in self._services.values():
-            service.stop(self.ctx)
-
-        # Wait for threads to exit
         for t in self._threads.values():
             t.join()
         self._threads.clear()

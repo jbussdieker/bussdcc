@@ -8,11 +8,13 @@ from .protocol import ProcessProtocol
 
 class Process(ProcessProtocol):
     name = "unnamed"
-    ctx: ContextProtocol
+    ctx: ContextProtocol | None
 
-    def _on_event(self, evt: Event) -> None:
+    def _handle_event(self, evt: Event) -> None:
+        if self.ctx is None:
+            return
         try:
-            self.on_event(self.ctx, evt)
+            self.handle_event(self.ctx, evt)
         except Exception as e:
             self.ctx.events.emit(
                 "process.error",
@@ -23,23 +25,18 @@ class Process(ProcessProtocol):
 
     def attach(self, ctx: ContextProtocol) -> None:
         self.ctx = ctx
-        self._sub = ctx.events.subscribe(self._on_event)
-        self.on_start(ctx)
-        self.ctx.events.emit("process.started", process=self.name)
+        self._sub = ctx.events.subscribe(self._handle_event)
 
     def detach(self) -> None:
-        try:
-            self._sub.cancel()
-            self.on_stop(self.ctx)
-        finally:
-            self.ctx.events.emit("process.stopped", process=self.name)
+        self.ctx = None
+        self._sub.cancel()
 
-    def on_start(self, ctx: ContextProtocol) -> None:
+    def start(self, ctx: ContextProtocol) -> None:
         pass
 
-    def on_stop(self, ctx: ContextProtocol) -> None:
+    def stop(self, ctx: ContextProtocol) -> None:
         pass
 
     @abstractmethod
-    def on_event(self, ctx: ContextProtocol, evt: Event) -> None:
+    def handle_event(self, ctx: ContextProtocol, evt: Event) -> None:
         pass

@@ -39,6 +39,7 @@ class Device(DeviceProtocol):
             self.online = False
             if self.ctx:
                 self.ctx.events.emit("device.detached", device=self.id, kind=self.kind)
+            self.ctx = None
 
     def connect(self) -> None:
         """Open hardware / resources"""
