@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.21.0](https://github.com/jbussdieker/bussdcc/compare/v0.20.1...v0.21.0) (2026-02-19)
+
+
+### Features
+
+* **runtime:** add ConsoleSink and JsonlSink for event handling ([8419da8](https://github.com/jbussdieker/bussdcc/commit/8419da8f858ba19240467281814fdd383b4e7544))
+
 ## [0.20.1](https://github.com/jbussdieker/bussdcc/compare/v0.20.0...v0.20.1) (2026-02-18)
 
 
