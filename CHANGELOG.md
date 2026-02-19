@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.22.0](https://github.com/jbussdieker/bussdcc/compare/v0.21.0...v0.22.0) (2026-02-19)
+
+
+### Features
+
+* **runtime:** enhance ConsoleSink with transform method ([0d02f89](https://github.com/jbussdieker/bussdcc/commit/0d02f89b251c10a76b018197cbc08f1613ecba72))
+
 ## [0.21.0](https://github.com/jbussdieker/bussdcc/compare/v0.20.1...v0.21.0) (2026-02-19)
 
 
