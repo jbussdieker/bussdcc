@@ -11,7 +11,7 @@ from bussdcc.process import ProcessProtocol
 from bussdcc.version import get_version
 
 from .protocol import RuntimeProtocol
-from .sink import EventSink
+from .sink import EventSinkProtocol
 
 
 class Runtime(RuntimeProtocol):
@@ -25,7 +25,7 @@ class Runtime(RuntimeProtocol):
         self.clock: Clock = clock or SystemClock()
         self.events: EventEngineProtocol = events or EventEngine(clock=self.clock)
         self.state: StateEngineProtocol = state or StateEngine()
-        self._sinks: list[EventSink] = []
+        self._sinks: list[EventSinkProtocol] = []
         self._devices: Dict[str, DeviceProtocol] = {}
         self._services: Dict[str, ServiceProtocol] = {}
         self._processes: Dict[str, ProcessProtocol] = {}
@@ -82,7 +82,7 @@ class Runtime(RuntimeProtocol):
     def booted(self) -> bool:
         return self._booted
 
-    def add_sink(self, sink: EventSink) -> None:
+    def add_sink(self, sink: EventSinkProtocol) -> None:
         if self._booted:
             raise RuntimeError("Cannot add sinks after boot")
         self._sinks.append(sink)
