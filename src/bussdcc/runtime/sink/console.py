@@ -1,3 +1,4 @@
+from typing import Any
 import json
 
 from bussdcc.event import Event
@@ -20,8 +21,17 @@ class ConsoleSink(EventSinkProtocol):
         record = {
             "time": evt.time.isoformat(),
             "name": evt.name,
-            "data": evt.data,
+            "data": self.transform(evt),
         }
 
         line = json.dumps(record, separators=(",", ":"))
         print(line)
+
+    def transform(self, evt: Event) -> dict[str, Any]:
+        """
+        Override to customize JSON output.
+
+        Must return a JSON-serializable dict.
+        Should not mutate evt.
+        """
+        return evt.data
