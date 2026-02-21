@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.22.1](https://github.com/jbussdieker/bussdcc/compare/v0.22.0...v0.22.1) (2026-02-21)
+
+
+### Bug Fixes
+
+* **event:** rename parameter in emit method ([5d2c59c](https://github.com/jbussdieker/bussdcc/commit/5d2c59cd1498c29ce39545b398be0703ccddf26d))
+
 ## [0.22.0](https://github.com/jbussdieker/bussdcc/compare/v0.21.0...v0.22.0) (2026-02-19)
 
 
