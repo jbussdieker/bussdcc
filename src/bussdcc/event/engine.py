@@ -45,10 +45,10 @@ class EventEngine:
     def unsubscribe(self, subscription: SubscriptionProtocol) -> None:
         subscription.cancel()
 
-    def emit(self, name: str, **data: Any) -> Event:
+    def emit(self, event_name: str, **data: Any) -> Event:
         evt = Event(
             time=self.clock.now_utc(),
-            name=name,
+            name=event_name,
             data=data,
         )
 
@@ -69,7 +69,7 @@ class EventEngine:
                     }
                 )
 
-        if name != "event.subscriber_error":
+        if event_name != "event.subscriber_error":
             for error in errors:
                 self.emit("event.subscriber_error", **error)
 
