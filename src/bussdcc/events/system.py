@@ -8,12 +8,12 @@ from .base import EventSchema
 
 @dataclass(slots=True)
 class SystemReload(EventSchema):
-    event = "system.reload"
+    name = "system.reload"
 
 
 @dataclass(slots=True)
 class SystemSignal(EventSchema):
-    event = "system.signal"
+    name = "system.signal"
 
     signal: int
     action: str
@@ -21,21 +21,21 @@ class SystemSignal(EventSchema):
 
 @dataclass(slots=True)
 class ProcessStarted(EventSchema):
-    event = "process.started"
+    name = "process.started"
 
     process: str
 
 
 @dataclass(slots=True)
 class ProcessStopped(EventSchema):
-    event = "process.stopped"
+    name = "process.stopped"
 
     process: str
 
 
 @dataclass(slots=True)
 class ProcessError(EventSchema):
-    event = "process.error"
+    name = "process.error"
 
     process: str
     error: str
@@ -45,21 +45,21 @@ class ProcessError(EventSchema):
 
 @dataclass(slots=True)
 class InterfaceStarted(EventSchema):
-    event = "interface.started"
+    name = "interface.started"
 
     interface: str
 
 
 @dataclass(slots=True)
 class InterfaceStopped(EventSchema):
-    event = "interface.stopped"
+    name = "interface.stopped"
 
     interface: str
 
 
 @dataclass(slots=True)
 class DeviceAttached(EventSchema):
-    event = "device.attached"
+    name = "device.attached"
 
     device: str
     kind: str
@@ -67,7 +67,7 @@ class DeviceAttached(EventSchema):
 
 @dataclass(slots=True)
 class DeviceDetached(EventSchema):
-    event = "device.detached"
+    name = "device.detached"
 
     device: str
     kind: str
@@ -75,7 +75,7 @@ class DeviceDetached(EventSchema):
 
 @dataclass(slots=True)
 class DeviceFailed(EventSchema):
-    event = "device.failed"
+    name = "device.failed"
 
     device: str
     kind: str
@@ -85,7 +85,7 @@ class DeviceFailed(EventSchema):
 
 @dataclass(slots=True)
 class ServiceError(EventSchema):
-    event = "service.error"
+    name = "service.error"
 
     service: str
     error: str
@@ -95,7 +95,7 @@ class ServiceError(EventSchema):
 
 @dataclass(slots=True)
 class ServiceFailure(EventSchema):
-    event = "service.failure"
+    name = "service.failure"
 
     service: str
     error: str
@@ -104,20 +104,20 @@ class ServiceFailure(EventSchema):
 
 @dataclass(slots=True)
 class ServiceRestart(EventSchema):
-    event = "service.restart"
+    name = "service.restart"
 
     service: str
 
 
 @dataclass(slots=True)
 class ServiceStopped(EventSchema):
-    event = "service.stopped"
+    name = "service.stopped"
 
     service: str
 
 
 @dataclass(slots=True)
 class ServiceStarted(EventSchema):
-    event = "service.started"
+    name = "service.started"
 
     service: str

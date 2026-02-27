@@ -62,7 +62,7 @@ class ServiceSupervisor:
                     )
                     if getattr(service, "critical", False):
                         self.ctx.emit(
-                            ServiceCriticalFailure(service=service.name, error=repr(e))
+                            ServiceFailure(service=service.name, error=repr(e))
                         )
                         # Critical failure halts supervisor
                         self._stop_flag.set()

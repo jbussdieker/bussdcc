@@ -50,7 +50,7 @@ class EventEngine(EventEngineProtocol):
         with self._lock:
             subs = list(self._subscriptions)
 
-        errors = []
+        # errors = []
 
         for sub in subs:
             try:
