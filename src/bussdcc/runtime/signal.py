@@ -2,6 +2,8 @@ from types import FrameType
 import signal
 from typing import Dict, Callable
 
+from bussdcc.events import *
+
 from .threaded import ThreadedRuntime
 
 
@@ -25,9 +27,9 @@ class SignalRuntime(ThreadedRuntime):
             # Thread-safe: shutdown() only sets state and events
             self.shutdown(signal.strsignal(signum))
         elif action == "reload":
-            self.ctx.events.emit("system.reload")
+            self.ctx.emit(SystemReload())
         elif action:
-            self.ctx.events.emit("system.signal", signal=signum, action=action)
+            self.ctx.emit(SystemSignal(signal=signum, action=action))
 
     def _on_boot(self) -> None:
         super()._on_boot()

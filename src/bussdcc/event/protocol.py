@@ -1,8 +1,10 @@
-from typing import Protocol, Callable, Any
+from typing import Protocol, Callable, Any, TypeVar
 
 from .event import Event
 
-EventHandler = Callable[[Event], None]
+T = TypeVar("T")
+
+EventHandler = Callable[[Event[T]], None]
 
 
 class SubscriptionProtocol(Protocol):
@@ -10,6 +12,8 @@ class SubscriptionProtocol(Protocol):
 
 
 class EventEngineProtocol(Protocol):
-    def emit(self, event_name: str, **data: Any) -> Event: ...
-    def subscribe(self, handler: EventHandler) -> SubscriptionProtocol: ...
+    def emit(self, event: Event[object]) -> None: ...
+    def subscribe(
+        self, event_type: type[T], handler: EventHandler[T]
+    ) -> SubscriptionProtocol: ...
     def unsubscribe(self, subscription: SubscriptionProtocol) -> None: ...

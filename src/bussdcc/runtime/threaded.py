@@ -21,8 +21,8 @@ class ThreadedRuntime(Runtime):
         self,
         *,
         clock: Optional[Clock] = None,
-        events: EventEngineProtocol | None = None,
-        state: StateEngineProtocol | None = None,
+        events: Optional[EventEngineProtocol] = None,
+        state: Optional[StateEngineProtocol] = None,
     ):
         super().__init__(clock=clock, events=events, state=state)
         self._stop_event = threading.Event()

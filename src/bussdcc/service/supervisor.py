@@ -3,6 +3,7 @@ import threading
 import traceback
 
 from bussdcc.context import ContextProtocol
+from bussdcc.events import *
 
 from .protocol import ServiceProtocol
 
@@ -52,35 +53,31 @@ class ServiceSupervisor:
                         if interrupted:
                             break
                 except Exception as e:
-                    self.ctx.events.emit(
-                        "service.error",
-                        service=service.name,
-                        error=repr(e),
-                        traceback=traceback.format_exc(),
-                    )
-                    if getattr(service, "critical", False):
-                        self.ctx.events.emit(
-                            "service.critical_failure",
+                    self.ctx.emit(
+                        ServiceError(
                             service=service.name,
                             error=repr(e),
+                            traceback=traceback.format_exc(),
+                        )
+                    )
+                    if getattr(service, "critical", False):
+                        self.ctx.emit(
+                            ServiceCriticalFailure(service=service.name, error=repr(e))
                         )
                         # Critical failure halts supervisor
                         self._stop_flag.set()
                         break
 
                     if getattr(service, "restart", True):
-                        self.ctx.events.emit(
-                            "service.restart",
-                            service=service.name,
-                        )
+                        self.ctx.emit(ServiceRestart(service=service.name))
                         continue  # restart the loop
                     else:
                         break
                 finally:
                     service.stop(self.ctx)
-                    self.ctx.events.emit("service.stopped", service=service.name)
+                    self.ctx.emit(ServiceStopped(service=service.name))
 
         t = threading.Thread(target=runner, name=f"service:{service.name}", daemon=True)
         self._threads[service.name] = t
         t.start()
-        self.ctx.events.emit("service.started", service=service.name)
+        self.ctx.emit(ServiceStarted(service=service.name))

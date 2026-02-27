@@ -31,7 +31,7 @@ class JsonlSink(EventSinkProtocol):
             self._file.close()
             self._file = None
 
-    def handle(self, evt: Event) -> None:
+    def handle(self, evt: Event[object]) -> None:
         if not evt.time:
             return
 
@@ -41,9 +41,10 @@ class JsonlSink(EventSinkProtocol):
             if segment_start != self._current_segment_start:
                 self._rotate(segment_start)
 
+            name = evt.payload.event if hasattr(evt.payload, "event") else "unknown"
             record = {
                 "time": evt.time.isoformat(),
-                "name": evt.name,
+                "name": name,
                 "data": self.transform(evt),
             }
 
@@ -51,14 +52,17 @@ class JsonlSink(EventSinkProtocol):
             assert self._file is not None
             self._file.write(line + "\n")
 
-    def transform(self, evt: Event) -> dict[str, Any]:
+    def transform(self, evt: Event[object]) -> Any:
         """
         Override to customize JSON output.
 
         Must return a JSON-serializable dict.
         Should not mutate evt.
         """
-        return evt.data
+        if hasattr(evt.payload, "to_dict"):
+            return evt.payload.to_dict()
+        else:
+            print("unable to serialize", evt.payload)
 
     def _segment_start(self, dt: datetime) -> datetime:
         if dt.tzinfo is None:

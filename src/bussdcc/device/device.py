@@ -1,5 +1,6 @@
 from bussdcc.device import DeviceProtocol
 from bussdcc.context import ContextProtocol
+from bussdcc.events import *
 
 
 class Device(DeviceProtocol):
@@ -19,26 +20,26 @@ class Device(DeviceProtocol):
             self.connect()
         except Exception as e:
             if self.ctx:
-                self.ctx.events.emit(
-                    "device.failed", device=self.id, kind=self.kind, error=repr(e)
+                self.ctx.emit(
+                    DeviceFailed(device=self.id, kind=self.kind, error=repr(e))
                 )
             raise
         self.online = True
         if self.ctx:
-            self.ctx.events.emit("device.attached", device=self.id, kind=self.kind)
+            self.ctx.emit(DeviceAttached(device=self.id, kind=self.kind))
 
     def detach(self) -> None:
         try:
             self.disconnect()
         except Exception as e:
             if self.ctx:
-                self.ctx.events.emit(
-                    "device.failed", device=self.id, kind=self.kind, error=repr(e)
+                self.ctx.emit(
+                    DeviceFailed(device=self.id, kind=self.kind, error=repr(e))
                 )
         finally:
             self.online = False
             if self.ctx:
-                self.ctx.events.emit("device.detached", device=self.id, kind=self.kind)
+                self.ctx.emit(DeviceDetached(device=self.id, kind=self.kind))
             self.ctx = None
 
     def connect(self) -> None:
