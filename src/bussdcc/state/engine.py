@@ -2,6 +2,7 @@ from typing import Any
 import threading
 
 from .protocol import StateEngineProtocol
+from .path import parse_path
 
 
 class StateEngine(StateEngineProtocol):
@@ -20,15 +21,18 @@ class StateEngine(StateEngineProtocol):
 
     def set(self, path: str, value: Any) -> None:
         with self._lock:
-            keys = path.split(".")
+            keys = parse_path(path)
             d = self._state
             for k in keys[:-1]:
-                d = d.setdefault(k, {})
+                nxt = d.setdefault(k, {})
+                if not isinstance(nxt, dict):
+                    raise TypeError(f"Path conflict at '{k}'")
+                d = nxt
             d[keys[-1]] = value
 
     def get(self, path: str, default: Any = None) -> Any:
         with self._lock:
-            keys = path.split(".")
+            keys = parse_path(path)
             d = self._state
             for k in keys:
                 if not isinstance(d, dict) or k not in d:
