@@ -40,6 +40,7 @@ class ProcessError(EventSchema):
     process: str
     error: str
     evt: Event[object] | None = None
+    traceback: str | None = None
 
 
 @dataclass(slots=True)
@@ -79,6 +80,7 @@ class DeviceFailed(EventSchema):
     device: str
     kind: str
     error: str
+    traceback: str | None = None
 
 
 @dataclass(slots=True)
@@ -92,11 +94,12 @@ class ServiceError(EventSchema):
 
 
 @dataclass(slots=True)
-class ServiceCriticalFailure(EventSchema):
-    event = "service.critical_failure"
+class ServiceFailure(EventSchema):
+    event = "service.failure"
 
     service: str
     error: str
+    traceback: str | None = None
 
 
 @dataclass(slots=True)

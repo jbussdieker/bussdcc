@@ -30,11 +30,3 @@ class RuntimeShutdown(EventSchema):
     event = "runtime.shutdown"
 
     version: str
-
-
-@dataclass(slots=True)
-class RuntimeSinkFailure(EventSchema):
-    event = "runtime.sink.failure"
-
-    sink: str
-    error: str

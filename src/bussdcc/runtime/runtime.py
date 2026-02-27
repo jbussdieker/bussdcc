@@ -1,3 +1,4 @@
+import traceback
 from typing import Optional, Dict, Self, Type, Literal, TypeVar
 from types import TracebackType
 
@@ -12,7 +13,6 @@ from bussdcc.process import ProcessProtocol
 from bussdcc.version import get_version
 
 from .protocol import RuntimeProtocol
-from .sink import EventSinkProtocol
 
 
 class Runtime(RuntimeProtocol):
@@ -26,7 +26,6 @@ class Runtime(RuntimeProtocol):
         self.clock: Clock = clock or SystemClock()
         self.events: EventEngineProtocol = events or EventEngine()
         self.state: StateEngineProtocol = state or StateEngine()
-        self._sinks: list[EventSinkProtocol] = []
         self._devices: Dict[str, DeviceProtocol] = {}
         self._services: Dict[str, ServiceProtocol] = {}
         self._processes: Dict[str, ProcessProtocol] = {}
@@ -48,13 +47,7 @@ class Runtime(RuntimeProtocol):
         return None
 
     def _dispatch(self, evt: Event[object]) -> None:
-        for sink in self._sinks:
-            try:
-                sink.handle(evt)
-            except Exception as e:
-                self.ctx.emit(
-                    RuntimeSinkFailure(sink=type(sink).__name__, error=repr(e))
-                )
+        pass
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} booted={self._booted}>"
@@ -81,11 +74,6 @@ class Runtime(RuntimeProtocol):
     @property
     def booted(self) -> bool:
         return self._booted
-
-    def add_sink(self, sink: EventSinkProtocol) -> None:
-        if self._booted:
-            raise RuntimeError("Cannot add sinks after boot")
-        self._sinks.append(sink)
 
     def register_service(self, service: ServiceProtocol) -> None:
         if self._booted:
@@ -138,9 +126,6 @@ class Runtime(RuntimeProtocol):
             return
 
         self._sub = self.events.subscribe(object, self._dispatch)
-
-        for sink in self._sinks:
-            sink.start(self.ctx)
 
         self.ctx.emit(RuntimeBooting(version=self.version))
 
@@ -212,9 +197,6 @@ class Runtime(RuntimeProtocol):
             self.ctx.emit(RuntimeShutdown(version=self.version))
 
             self._sub.cancel()
-
-            for sink in reversed(self._sinks):
-                sink.stop()
         except Exception:
             raise
         finally:
