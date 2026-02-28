@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.23.0](https://github.com/jbussdieker/bussdcc/compare/v0.22.1...v0.23.0) (2026-02-28)
+
+
+### Features
+
+* **events:** implement typed event system ([dcf817d](https://github.com/jbussdieker/bussdcc/commit/dcf817daf1b10a759d74230dde3fd05498aac1ad))
+* **state:** add update method to StateEngine ([07ceacb](https://github.com/jbussdieker/bussdcc/commit/07ceacb79ee74f5914e8af4c048c3af2ba3af953))
+* **state:** enhance path handling in StateEngine ([d109100](https://github.com/jbussdieker/bussdcc/commit/d10910001b470ee25ac7e4fcf36e8a37b607e2b9))
+
 ## [0.22.1](https://github.com/jbussdieker/bussdcc/compare/v0.22.0...v0.22.1) (2026-02-21)
 
 
