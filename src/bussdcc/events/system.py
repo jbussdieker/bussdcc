@@ -4,6 +4,7 @@ from typing import Any
 from bussdcc.event import Event
 
 from .base import EventSchema
+from .level import EventLevel
 
 
 @dataclass(slots=True)
@@ -36,6 +37,7 @@ class ProcessStopped(EventSchema):
 @dataclass(slots=True)
 class ProcessError(EventSchema):
     name = "process.error"
+    level = EventLevel.ERROR
 
     process: str
     error: str
@@ -76,6 +78,7 @@ class DeviceDetached(EventSchema):
 @dataclass(slots=True)
 class DeviceFailed(EventSchema):
     name = "device.failed"
+    level = EventLevel.ERROR
 
     device: str
     kind: str
@@ -86,6 +89,7 @@ class DeviceFailed(EventSchema):
 @dataclass(slots=True)
 class ServiceError(EventSchema):
     name = "service.error"
+    level = EventLevel.ERROR
 
     service: str
     error: str
@@ -96,6 +100,7 @@ class ServiceError(EventSchema):
 @dataclass(slots=True)
 class ServiceFailure(EventSchema):
     name = "service.failure"
+    level = EventLevel.CRITICAL
 
     service: str
     error: str
