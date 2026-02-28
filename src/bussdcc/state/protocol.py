@@ -1,4 +1,4 @@
-from typing import Protocol, Any
+from typing import Protocol, Any, Callable
 
 
 class StateEngineProtocol(Protocol):
@@ -30,3 +30,5 @@ class StateEngineProtocol(Protocol):
             The stored value or `default` if not found
         """
         ...
+
+    def update(self, path: str, fn: Callable[[Any], Any]) -> Any: ...

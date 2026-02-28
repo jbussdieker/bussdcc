@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Callable
 import threading
 
 from .protocol import StateEngineProtocol
@@ -39,3 +39,20 @@ class StateEngine(StateEngineProtocol):
                     return default
                 d = d[k]
             return d
+
+    def update(self, path: str, fn: Callable[[Any], Any]) -> Any:
+        with self._lock:
+            keys = parse_path(path)
+            d = self._state
+
+            for k in keys[:-1]:
+                nxt = d.setdefault(k, {})
+                if not isinstance(nxt, dict):
+                    raise TypeError(f"Path conflict at '{k}'")
+                d = nxt
+
+            leaf = keys[-1]
+            old = d.get(leaf)
+            new = fn(old)
+            d[leaf] = new
+            return new
