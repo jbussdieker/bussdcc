@@ -126,3 +126,14 @@ class ServiceStarted(EventSchema):
     name = "service.started"
 
     service: str
+
+
+@dataclass(slots=True)
+class EventSubscriberError(EventSchema):
+    name = "event.subscriber_error"
+    level = EventLevel.ERROR
+
+    event: str
+    handler: str
+    error: str
+    traceback: str | None = None

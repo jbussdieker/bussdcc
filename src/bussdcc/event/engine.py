@@ -1,4 +1,5 @@
 from typing import List, Any, TypeVar
+import traceback
 import threading
 
 from bussdcc.clock import Clock
@@ -6,6 +7,8 @@ from bussdcc.clock import Clock
 from .event import Event
 from .handler import TypedHandler
 from .protocol import EventHandler, SubscriptionProtocol, EventEngineProtocol
+
+from .. import events
 
 T = TypeVar("T")
 
@@ -46,25 +49,34 @@ class EventEngine(EventEngineProtocol):
     def unsubscribe(self, subscription: SubscriptionProtocol) -> None:
         subscription.cancel()
 
-    def emit(self, evt: Event[object]) -> None:
+    def emit(self, evt: Event[Any]) -> None:
         with self._lock:
             subs = list(self._subscriptions)
 
-        # errors = []
+        payload = evt.payload
+        level = getattr(payload, "level", events.EventLevel.INFO)
 
         for sub in subs:
             try:
                 sub._handler.handle(evt)
             except Exception as e:
-                pass
-                # errors.append(
-                #    {
-                #        "event": evt.name,
-                #        "subscriber": repr(sub.handler),
-                #        "error": repr(e),
-                #    }
-                # )
+                # Never recurse on error-level events
+                if level >= events.EventLevel.ERROR:
+                    continue
 
-        # if event_name != "event.subscriber_error":
-        #    for error in errors:
-        #        self.emit("event.subscriber_error", **error)
+                try:
+                    error_evt = Event(
+                        time=evt.time,
+                        payload=events.EventSubscriberError(
+                            event=getattr(payload, "name", type(payload).__name__),
+                            handler=repr(sub._handler),
+                            error=repr(e),
+                            traceback=traceback.format_exc(),
+                        ),
+                    )
+
+                    self.emit(error_evt)  # SAFE: guarded by level check
+
+                except Exception:
+                    # Absolute last-resort safety
+                    pass
