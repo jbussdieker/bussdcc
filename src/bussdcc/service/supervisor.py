@@ -3,7 +3,7 @@ import threading
 import traceback
 
 from bussdcc.context import ContextProtocol
-from bussdcc.events import *
+from bussdcc import events
 
 from .protocol import ServiceProtocol
 
@@ -54,7 +54,7 @@ class ServiceSupervisor:
                             break
                 except Exception as e:
                     self.ctx.emit(
-                        ServiceError(
+                        events.ServiceError(
                             service=service.name,
                             error=repr(e),
                             traceback=traceback.format_exc(),
@@ -62,22 +62,22 @@ class ServiceSupervisor:
                     )
                     if getattr(service, "critical", False):
                         self.ctx.emit(
-                            ServiceFailure(service=service.name, error=repr(e))
+                            events.ServiceFailure(service=service.name, error=repr(e))
                         )
                         # Critical failure halts supervisor
                         self._stop_flag.set()
                         break
 
                     if getattr(service, "restart", True):
-                        self.ctx.emit(ServiceRestart(service=service.name))
+                        self.ctx.emit(events.ServiceRestart(service=service.name))
                         continue  # restart the loop
                     else:
                         break
                 finally:
                     service.stop(self.ctx)
-                    self.ctx.emit(ServiceStopped(service=service.name))
+                    self.ctx.emit(events.ServiceStopped(service=service.name))
 
         t = threading.Thread(target=runner, name=f"service:{service.name}", daemon=True)
         self._threads[service.name] = t
         t.start()
-        self.ctx.emit(ServiceStarted(service=service.name))
+        self.ctx.emit(events.ServiceStarted(service=service.name))

@@ -1,4 +1,4 @@
-from typing import List, Any, TypeVar
+from typing import List, Any, TypeVar, cast
 import traceback
 import threading
 
@@ -8,6 +8,7 @@ from .event import Event
 from .handler import TypedHandler
 from .protocol import EventHandler, SubscriptionProtocol, EventEngineProtocol
 
+from ..events import EventSchema
 from .. import events
 
 T = TypeVar("T")
@@ -49,29 +50,31 @@ class EventEngine(EventEngineProtocol):
     def unsubscribe(self, subscription: SubscriptionProtocol) -> None:
         subscription.cancel()
 
-    def emit(self, evt: Event[Any]) -> None:
+    def emit(self, evt: Event[EventSchema]) -> None:
         with self._lock:
             subs = list(self._subscriptions)
-
-        payload = evt.payload
-        level = getattr(payload, "level", events.EventLevel.INFO)
 
         for sub in subs:
             try:
                 sub._handler.handle(evt)
             except Exception as e:
                 # Never recurse on error-level events
-                if level >= events.EventLevel.ERROR:
+                if evt.payload.level >= events.EventLevel.ERROR:
                     continue
 
                 try:
                     error_evt = Event(
                         time=evt.time,
-                        payload=events.EventSubscriberError(
-                            event=getattr(payload, "name", type(payload).__name__),
-                            handler=repr(sub._handler),
-                            error=repr(e),
-                            traceback=traceback.format_exc(),
+                        payload=cast(
+                            EventSchema,
+                            events.EventSubscriberError(
+                                event=getattr(
+                                    evt.payload, "name", type(evt.payload).__name__
+                                ),
+                                handler=repr(sub._handler),
+                                error=repr(e),
+                                traceback=traceback.format_exc(),
+                            ),
                         ),
                     )
 

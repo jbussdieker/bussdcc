@@ -41,7 +41,7 @@ class ProcessError(EventSchema):
 
     process: str
     error: str
-    evt: Event[object] | None = None
+    evt: Event[EventSchema] | None = None
     traceback: str | None = None
 
 
@@ -93,7 +93,7 @@ class ServiceError(EventSchema):
 
     service: str
     error: str
-    evt: Event[object] | None = None
+    evt: Event[EventSchema] | None = None
     traceback: str | None = None
 
 

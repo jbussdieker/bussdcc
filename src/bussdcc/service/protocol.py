@@ -1,7 +1,8 @@
 from typing import Protocol
 
 from bussdcc.context import ContextProtocol
-from bussdcc.event.event import Event
+from bussdcc.event import Event
+from bussdcc.events import EventSchema
 
 
 class ServiceProtocol(Protocol):
@@ -14,4 +15,4 @@ class ServiceProtocol(Protocol):
     def tick(self, ctx: ContextProtocol) -> None: ...
     def stop(self, ctx: ContextProtocol) -> None: ...
 
-    def handle_event(self, ctx: ContextProtocol, evt: Event[object]) -> None: ...
+    def handle_event(self, ctx: ContextProtocol, evt: Event[EventSchema]) -> None: ...

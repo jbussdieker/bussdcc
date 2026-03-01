@@ -46,7 +46,7 @@ class Runtime(RuntimeProtocol):
         """Hook for subclasses to release resources."""
         return None
 
-    def _dispatch(self, evt: Event[object]) -> None:
+    def _dispatch(self, evt: Event[EventSchema]) -> None:
         pass
 
     def __repr__(self) -> str:
@@ -125,7 +125,7 @@ class Runtime(RuntimeProtocol):
         if self._booted:
             return
 
-        self._sub = self.events.subscribe(object, self._dispatch)
+        self._sub = self.events.subscribe(EventSchema, self._dispatch)
 
         self.ctx.emit(RuntimeBooting(version=self.version))
 
