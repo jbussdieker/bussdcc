@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.26.0](https://github.com/jbussdieker/bussdcc/compare/v0.25.0...v0.26.0) (2026-03-01)
+
+
+### Features
+
+* **refactor:** renaming refactor ([177a445](https://github.com/jbussdieker/bussdcc/commit/177a445004614f80fd4420d70b8dc4a05055e0c8))
+
 ## [0.25.0](https://github.com/jbussdieker/bussdcc/compare/v0.24.0...v0.25.0) (2026-03-01)
 
 
