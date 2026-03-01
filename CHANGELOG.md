@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.24.0](https://github.com/jbussdieker/bussdcc/compare/v0.23.0...v0.24.0) (2026-03-01)
+
+
+### Features
+
+* **event:** add error handling for event subscribers ([90a72ac](https://github.com/jbussdieker/bussdcc/commit/90a72ac46c7f326a68dc7e8a6f3b8827a406265a))
+* **events:** introduce event levels to EventSchema ([1022538](https://github.com/jbussdieker/bussdcc/commit/1022538e1d14d001d90c29b14fff63d7fa6f5f1a))
+
 ## [0.23.0](https://github.com/jbussdieker/bussdcc/compare/v0.22.1...v0.23.0) (2026-02-28)
 
 
