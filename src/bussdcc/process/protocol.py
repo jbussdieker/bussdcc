@@ -2,7 +2,7 @@ from typing import Protocol
 
 from bussdcc.context import ContextProtocol
 from bussdcc.event import Event
-from bussdcc.events import EventSchema
+from bussdcc.message import Message
 
 
 class ProcessProtocol(Protocol):
@@ -14,4 +14,4 @@ class ProcessProtocol(Protocol):
     def start(self, ctx: ContextProtocol) -> None: ...
     def stop(self, ctx: ContextProtocol) -> None: ...
 
-    def handle_event(self, ctx: ContextProtocol, evt: Event[EventSchema]) -> None: ...
+    def handle_event(self, ctx: ContextProtocol, evt: Event[Message]) -> None: ...

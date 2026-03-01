@@ -1,9 +1,9 @@
+from .protocol import StateStoreProtocol
 from .path import parse_path
-from .engine import StateEngine
-from .protocol import StateEngineProtocol
+from .store import StateStore
 
 __all__ = [
     "parse_path",
-    "StateEngine",
-    "StateEngineProtocol",
+    "StateStore",
+    "StateStoreProtocol",
 ]

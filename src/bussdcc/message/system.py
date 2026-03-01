@@ -3,17 +3,17 @@ from typing import Any
 
 from bussdcc.event import Event
 
-from .base import EventSchema
+from .base import Message
 from .level import EventLevel
 
 
 @dataclass(slots=True)
-class SystemReload(EventSchema):
+class SystemReload(Message):
     name = "system.reload"
 
 
 @dataclass(slots=True)
-class SystemSignal(EventSchema):
+class SystemSignal(Message):
     name = "system.signal"
 
     signal: int
@@ -21,46 +21,46 @@ class SystemSignal(EventSchema):
 
 
 @dataclass(slots=True)
-class ProcessStarted(EventSchema):
+class ProcessStarted(Message):
     name = "process.started"
 
     process: str
 
 
 @dataclass(slots=True)
-class ProcessStopped(EventSchema):
+class ProcessStopped(Message):
     name = "process.stopped"
 
     process: str
 
 
 @dataclass(slots=True)
-class ProcessError(EventSchema):
+class ProcessError(Message):
     name = "process.error"
     level = EventLevel.ERROR
 
     process: str
     error: str
-    evt: Event[EventSchema] | None = None
+    evt: Event[Message] | None = None
     traceback: str | None = None
 
 
 @dataclass(slots=True)
-class InterfaceStarted(EventSchema):
+class InterfaceStarted(Message):
     name = "interface.started"
 
     interface: str
 
 
 @dataclass(slots=True)
-class InterfaceStopped(EventSchema):
+class InterfaceStopped(Message):
     name = "interface.stopped"
 
     interface: str
 
 
 @dataclass(slots=True)
-class DeviceAttached(EventSchema):
+class DeviceAttached(Message):
     name = "device.attached"
 
     device: str
@@ -68,7 +68,7 @@ class DeviceAttached(EventSchema):
 
 
 @dataclass(slots=True)
-class DeviceDetached(EventSchema):
+class DeviceDetached(Message):
     name = "device.detached"
 
     device: str
@@ -76,7 +76,7 @@ class DeviceDetached(EventSchema):
 
 
 @dataclass(slots=True)
-class DeviceFailed(EventSchema):
+class DeviceFailed(Message):
     name = "device.failed"
     level = EventLevel.ERROR
 
@@ -87,18 +87,18 @@ class DeviceFailed(EventSchema):
 
 
 @dataclass(slots=True)
-class ServiceError(EventSchema):
+class ServiceError(Message):
     name = "service.error"
     level = EventLevel.ERROR
 
     service: str
     error: str
-    evt: Event[EventSchema] | None = None
+    evt: Event[Message] | None = None
     traceback: str | None = None
 
 
 @dataclass(slots=True)
-class ServiceFailure(EventSchema):
+class ServiceFailure(Message):
     name = "service.failure"
     level = EventLevel.CRITICAL
 
@@ -108,28 +108,28 @@ class ServiceFailure(EventSchema):
 
 
 @dataclass(slots=True)
-class ServiceRestart(EventSchema):
+class ServiceRestart(Message):
     name = "service.restart"
 
     service: str
 
 
 @dataclass(slots=True)
-class ServiceStopped(EventSchema):
+class ServiceStopped(Message):
     name = "service.stopped"
 
     service: str
 
 
 @dataclass(slots=True)
-class ServiceStarted(EventSchema):
+class ServiceStarted(Message):
     name = "service.started"
 
     service: str
 
 
 @dataclass(slots=True)
-class EventSubscriberError(EventSchema):
+class EventSubscriberError(Message):
     name = "event.subscriber_error"
     level = EventLevel.ERROR
 

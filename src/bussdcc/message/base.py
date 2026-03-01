@@ -5,7 +5,7 @@ from .level import EventLevel
 
 
 @dataclass(slots=True)
-class EventSchema:
+class Message:
     name: ClassVar[str]
     level: ClassVar[EventLevel] = EventLevel.INFO
 

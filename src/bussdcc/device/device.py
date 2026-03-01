@@ -2,7 +2,7 @@ import traceback
 
 from bussdcc.device import DeviceProtocol
 from bussdcc.context import ContextProtocol
-from bussdcc import events
+from bussdcc import message
 
 
 class Device(DeviceProtocol):
@@ -23,7 +23,7 @@ class Device(DeviceProtocol):
         except Exception as e:
             if self.ctx:
                 self.ctx.emit(
-                    events.DeviceFailed(
+                    message.DeviceFailed(
                         device=self.id,
                         kind=self.kind,
                         error=repr(e),
@@ -33,7 +33,7 @@ class Device(DeviceProtocol):
             raise
         self.online = True
         if self.ctx:
-            self.ctx.emit(events.DeviceAttached(device=self.id, kind=self.kind))
+            self.ctx.emit(message.DeviceAttached(device=self.id, kind=self.kind))
 
     def detach(self) -> None:
         try:
@@ -41,7 +41,7 @@ class Device(DeviceProtocol):
         except Exception as e:
             if self.ctx:
                 self.ctx.emit(
-                    events.DeviceFailed(
+                    message.DeviceFailed(
                         device=self.id,
                         kind=self.kind,
                         error=repr(e),
@@ -51,7 +51,7 @@ class Device(DeviceProtocol):
         finally:
             self.online = False
             if self.ctx:
-                self.ctx.emit(events.DeviceDetached(device=self.id, kind=self.kind))
+                self.ctx.emit(message.DeviceDetached(device=self.id, kind=self.kind))
             self.ctx = None
 
     def connect(self) -> None:

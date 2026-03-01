@@ -2,20 +2,18 @@ from typing import List, Any, TypeVar, cast
 import traceback
 import threading
 
-from bussdcc.clock import Clock
-
 from .event import Event
 from .handler import TypedHandler
-from .protocol import EventHandler, SubscriptionProtocol, EventEngineProtocol
+from .protocol import EventHandler, SubscriptionProtocol, EventBusProtocol
 
-from ..events import EventSchema
-from .. import events
+from ..message import Message, EventLevel
+from .. import message
 
 T = TypeVar("T")
 
 
 class _Subscription:
-    def __init__(self, engine: "EventEngine", handler: TypedHandler[T]):
+    def __init__(self, engine: "EventBus", handler: TypedHandler[T]):
         self._engine = engine
         self._handler = handler
         self._cancelled = False
@@ -26,7 +24,7 @@ class _Subscription:
             self._cancelled = True
 
 
-class EventEngine(EventEngineProtocol):
+class EventBus(EventBusProtocol):
     def __init__(self) -> None:
         self._lock = threading.RLock()
         self._subscriptions: List[_Subscription] = []
@@ -50,7 +48,7 @@ class EventEngine(EventEngineProtocol):
     def unsubscribe(self, subscription: SubscriptionProtocol) -> None:
         subscription.cancel()
 
-    def emit(self, evt: Event[EventSchema]) -> None:
+    def emit(self, evt: Event[Message]) -> None:
         with self._lock:
             subs = list(self._subscriptions)
 
@@ -59,15 +57,15 @@ class EventEngine(EventEngineProtocol):
                 sub._handler.handle(evt)
             except Exception as e:
                 # Never recurse on error-level events
-                if evt.payload.level >= events.EventLevel.ERROR:
+                if evt.payload.level >= EventLevel.ERROR:
                     continue
 
                 try:
                     error_evt = Event(
                         time=evt.time,
                         payload=cast(
-                            EventSchema,
-                            events.EventSubscriberError(
+                            Message,
+                            message.EventSubscriberError(
                                 event=getattr(
                                     evt.payload, "name", type(evt.payload).__name__
                                 ),

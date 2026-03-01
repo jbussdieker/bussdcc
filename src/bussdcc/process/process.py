@@ -2,7 +2,8 @@ import traceback
 
 from bussdcc.event import Event
 from bussdcc.context import ContextProtocol
-from bussdcc import events
+from bussdcc.message import Message, EventLevel
+from bussdcc import message
 
 from .protocol import ProcessProtocol
 
@@ -12,18 +13,18 @@ class Process(ProcessProtocol):
 
     ctx: ContextProtocol | None
 
-    def _handle_event(self, evt: Event[events.EventSchema]) -> None:
+    def _handle_event(self, evt: Event[Message]) -> None:
         if self.ctx is None:
             return
         try:
             self.handle_event(self.ctx, evt)
         except Exception as e:
             # Never recurse on error-level events
-            if evt.payload.level >= events.EventLevel.ERROR:
+            if evt.payload.level >= EventLevel.ERROR:
                 return
 
             self.ctx.emit(
-                events.ProcessError(
+                message.ProcessError(
                     process=self.name,
                     error=repr(e),
                     evt=evt,
@@ -33,7 +34,7 @@ class Process(ProcessProtocol):
 
     def attach(self, ctx: ContextProtocol) -> None:
         self.ctx = ctx
-        self._sub = ctx.events.subscribe(events.EventSchema, self._handle_event)
+        self._sub = ctx.events.subscribe(Message, self._handle_event)
 
     def detach(self) -> None:
         self.ctx = None
@@ -45,7 +46,5 @@ class Process(ProcessProtocol):
     def stop(self, ctx: ContextProtocol) -> None:
         pass
 
-    def handle_event(
-        self, ctx: ContextProtocol, evt: Event[events.EventSchema]
-    ) -> None:
+    def handle_event(self, ctx: ContextProtocol, evt: Event[Message]) -> None:
         pass

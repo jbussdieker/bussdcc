@@ -1,7 +1,7 @@
-from .protocol import Clock
+from .protocol import ClockProtocol
 from .system_clock import SystemClock
 
 __all__ = [
-    "Clock",
+    "ClockProtocol",
     "SystemClock",
 ]

@@ -1,16 +1,16 @@
 from typing import Any, Callable
 import threading
 
-from .protocol import StateEngineProtocol
+from .protocol import StateStoreProtocol
 from .path import parse_path
 
 
-class StateEngine(StateEngineProtocol):
+class StateStore(StateStoreProtocol):
     """
     Thread-safe hierarchical state storage.
 
     Supports dot-separated paths:
-        se = StateEngine()
+        se = StateStore()
         se.set("system.clock.uptime", 42)
         se.get("system.clock.uptime") -> 42
     """

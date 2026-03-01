@@ -1,11 +1,11 @@
 from typing import TypeVar
 
-from bussdcc.clock import Clock
+from bussdcc.clock import ClockProtocol
 from bussdcc.event import Event
-from bussdcc.events import EventSchema
+from bussdcc.message import Message
 from bussdcc.runtime.protocol import RuntimeProtocol
-from bussdcc.event.protocol import EventEngineProtocol
-from bussdcc.state.protocol import StateEngineProtocol
+from bussdcc.event.protocol import EventBusProtocol
+from bussdcc.state.protocol import StateStoreProtocol
 
 from .protocol import ContextProtocol
 
@@ -15,15 +15,15 @@ T = TypeVar("T")
 class Context(ContextProtocol):
     def __init__(
         self,
-        clock: Clock,
+        clock: ClockProtocol,
         runtime: RuntimeProtocol,
-        events: EventEngineProtocol,
-        state: StateEngineProtocol,
+        events: EventBusProtocol,
+        state: StateStoreProtocol,
     ):
-        self.clock: Clock = clock
+        self.clock: ClockProtocol = clock
         self.runtime: RuntimeProtocol = runtime
         self.events = events
         self.state = state
 
-    def emit(self, payload: EventSchema) -> None:
-        self.events.emit(Event(time=self.clock.now_utc(), payload=payload))
+    def emit(self, message: Message) -> None:
+        self.events.emit(Event(time=self.clock.now_utc(), payload=message))

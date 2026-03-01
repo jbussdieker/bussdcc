@@ -3,14 +3,16 @@ from typing import Optional, Dict, Self, Type, Literal, TypeVar
 from types import TracebackType
 
 from bussdcc.context import Context, ContextProtocol
-from bussdcc.clock import Clock, SystemClock
+from bussdcc.clock import ClockProtocol, SystemClock
 from bussdcc.device import DeviceProtocol
-from bussdcc.event import Event, EventEngine, EventEngineProtocol
-from bussdcc.events import *
-from bussdcc.state import StateEngine, StateEngineProtocol
+from bussdcc.event import Event, EventBus, EventBusProtocol
+from bussdcc.message import Message
+from bussdcc.state import StateStore, StateStoreProtocol
 from bussdcc.service import ServiceProtocol, ServiceSupervisor
 from bussdcc.process import ProcessProtocol
 from bussdcc.version import get_version
+
+from bussdcc import message
 
 from .protocol import RuntimeProtocol
 
@@ -19,13 +21,13 @@ class Runtime(RuntimeProtocol):
     def __init__(
         self,
         *,
-        clock: Optional[Clock] = None,
-        events: EventEngineProtocol | None = None,
-        state: StateEngineProtocol | None = None,
+        clock: Optional[ClockProtocol] = None,
+        events: EventBusProtocol | None = None,
+        state: StateStoreProtocol | None = None,
     ):
-        self.clock: Clock = clock or SystemClock()
-        self.events: EventEngineProtocol = events or EventEngine()
-        self.state: StateEngineProtocol = state or StateEngine()
+        self.clock: ClockProtocol = clock or SystemClock()
+        self.events: EventBusProtocol = events or EventBus()
+        self.state: StateStoreProtocol = state or StateStore()
         self._devices: Dict[str, DeviceProtocol] = {}
         self._services: Dict[str, ServiceProtocol] = {}
         self._processes: Dict[str, ProcessProtocol] = {}
@@ -46,7 +48,7 @@ class Runtime(RuntimeProtocol):
         """Hook for subclasses to release resources."""
         return None
 
-    def _dispatch(self, evt: Event[EventSchema]) -> None:
+    def _dispatch(self, evt: Event[Message]) -> None:
         pass
 
     def __repr__(self) -> str:
@@ -125,9 +127,9 @@ class Runtime(RuntimeProtocol):
         if self._booted:
             return
 
-        self._sub = self.events.subscribe(EventSchema, self._dispatch)
+        self._sub = self.events.subscribe(Message, self._dispatch)
 
-        self.ctx.emit(RuntimeBooting(version=self.version))
+        self.ctx.emit(message.RuntimeBooting(version=self.version))
 
         self._on_boot()
 
@@ -139,16 +141,16 @@ class Runtime(RuntimeProtocol):
         for process in self._processes.values():
             process.attach(self.ctx)
             process.start(self.ctx)
-            self.ctx.emit(ProcessStarted(process=process.name))
+            self.ctx.emit(message.ProcessStarted(process=process.name))
 
         # Attach interfaces
         for interface in self._interfaces.values():
             interface.attach(self.ctx)
             interface.start(self.ctx)
-            self.ctx.emit(InterfaceStarted(interface=interface.name))
+            self.ctx.emit(message.InterfaceStarted(interface=interface.name))
 
         self._booted = True
-        self.ctx.emit(RuntimeBooted(version=self.version))
+        self.ctx.emit(message.RuntimeBooted(version=self.version))
 
         # Start services under supervisor
         self._service_supervisor = ServiceSupervisor(self.ctx)
@@ -163,7 +165,7 @@ class Runtime(RuntimeProtocol):
             return  # Be idempotent on shutdown to avoid exit crashes
 
         try:
-            self.ctx.emit(RuntimeShuttingDown(reason=reason))
+            self.ctx.emit(message.RuntimeShuttingDown(reason=reason))
 
             # Stop services first then detach
             if self._service_supervisor:
@@ -178,7 +180,7 @@ class Runtime(RuntimeProtocol):
                     interface.stop(self.ctx)
                 finally:
                     interface.detach()
-                    self.ctx.emit(InterfaceStopped(interface=interface.name))
+                    self.ctx.emit(message.InterfaceStopped(interface=interface.name))
 
             # Stop and detach processes
             for process in self._processes.values():
@@ -186,7 +188,7 @@ class Runtime(RuntimeProtocol):
                     process.stop(self.ctx)
                 finally:
                     process.detach()
-                    self.ctx.emit(ProcessStopped(process=process.name))
+                    self.ctx.emit(message.ProcessStopped(process=process.name))
 
             # Detach devices in reverse order
             for device in reversed(list(self._devices.values())):
@@ -194,7 +196,7 @@ class Runtime(RuntimeProtocol):
 
             self._on_shutdown(reason)
 
-            self.ctx.emit(RuntimeShutdown(version=self.version))
+            self.ctx.emit(message.RuntimeShutdown(version=self.version))
 
             self._sub.cancel()
         except Exception:

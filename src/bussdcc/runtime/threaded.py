@@ -1,9 +1,9 @@
 import threading
 from typing import Optional
 
-from bussdcc.clock import Clock
-from bussdcc.event import EventEngineProtocol
-from bussdcc.state import StateEngineProtocol
+from bussdcc.clock import ClockProtocol
+from bussdcc.event import EventBusProtocol
+from bussdcc.state import StateStoreProtocol
 
 from .runtime import Runtime
 
@@ -20,9 +20,9 @@ class ThreadedRuntime(Runtime):
     def __init__(
         self,
         *,
-        clock: Optional[Clock] = None,
-        events: Optional[EventEngineProtocol] = None,
-        state: Optional[StateEngineProtocol] = None,
+        clock: Optional[ClockProtocol] = None,
+        events: Optional[EventBusProtocol] = None,
+        state: Optional[StateStoreProtocol] = None,
     ):
         super().__init__(clock=clock, events=events, state=state)
         self._stop_event = threading.Event()

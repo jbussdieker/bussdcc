@@ -3,7 +3,7 @@ from datetime import datetime
 import threading
 
 
-class Clock(Protocol):
+class ClockProtocol(Protocol):
     def sleep(
         self,
         seconds: float,

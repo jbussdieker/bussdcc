@@ -1,18 +1,18 @@
 from typing import Protocol, TYPE_CHECKING
 
-from bussdcc.clock import Clock
-from bussdcc.events import EventSchema
-from bussdcc.event.protocol import EventEngineProtocol
-from bussdcc.state.protocol import StateEngineProtocol
+from bussdcc.clock import ClockProtocol
+from bussdcc.message import Message
+from bussdcc.event.protocol import EventBusProtocol
+from bussdcc.state.protocol import StateStoreProtocol
 
 if TYPE_CHECKING:
     from bussdcc.runtime.protocol import RuntimeProtocol
 
 
 class ContextProtocol(Protocol):
-    clock: Clock
+    clock: ClockProtocol
     runtime: "RuntimeProtocol"
-    events: EventEngineProtocol
-    state: StateEngineProtocol
+    events: EventBusProtocol
+    state: StateStoreProtocol
 
-    def emit(self, payload: EventSchema) -> None: ...
+    def emit(self, message: Message) -> None: ...

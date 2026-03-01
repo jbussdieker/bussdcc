@@ -1,7 +1,7 @@
 from typing import Protocol, Any, Callable
 
 
-class StateEngineProtocol(Protocol):
+class StateStoreProtocol(Protocol):
     """
     Protocol for a hierarchical, thread-safe state store.
 

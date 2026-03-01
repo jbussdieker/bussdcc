@@ -2,10 +2,10 @@ import threading
 from datetime import datetime, timezone
 import time
 
-from .protocol import Clock
+from .protocol import ClockProtocol
 
 
-class SystemClock(Clock):
+class SystemClock(ClockProtocol):
     def __init__(self) -> None:
         self._origin = time.monotonic()
 
