@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.27.1](https://github.com/jbussdieker/bussdcc/compare/v0.27.0...v0.27.1) (2026-03-03)
+
+
+### Documentation
+
+* **readme:** enhance project description and update examples ([5a9a0b9](https://github.com/jbussdieker/bussdcc/commit/5a9a0b91b1bfb2daa468d0fafa3a510094062880))
+
 ## [0.27.0](https://github.com/jbussdieker/bussdcc/compare/v0.26.0...v0.27.0) (2026-03-03)
 
 
