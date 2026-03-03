@@ -8,24 +8,27 @@ from .level import EventLevel
 
 
 @dataclass(slots=True, frozen=True)
-class SystemReload(Message):
-    name = "system.reload"
+class DeviceAttached(Message):
+    name = "device.attached"
+
+    device: str
+    kind: str
 
 
 @dataclass(slots=True, frozen=True)
-class SystemSignal(Message):
-    name = "system.signal"
+class DeviceDetached(Message):
+    name = "device.detached"
 
-    signal: int
-    action: str
+    device: str
+    kind: str
 
 
 @dataclass(slots=True, frozen=True)
-class EventSubscriberError(Message):
-    name = "event.subscriber_error"
+class DeviceFailed(Message):
+    name = "device.failed"
     level = EventLevel.ERROR
 
-    event: str
-    handler: str
+    device: str
+    kind: str
     error: str
     traceback: str | None = None

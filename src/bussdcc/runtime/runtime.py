@@ -28,16 +28,16 @@ class Runtime(RuntimeProtocol):
         self.clock: ClockProtocol = clock or SystemClock()
         self.events: EventBusProtocol = events or EventBus()
         self.state: StateStoreProtocol = state or StateStore()
+        self.version: str = get_version()
+        self.ctx: ContextProtocol = Context(
+            clock=self.clock, runtime=self, events=self.events, state=self.state
+        )
+
+        self._booted: bool = False
         self._devices: Dict[str, DeviceProtocol] = {}
         self._services: Dict[str, ServiceProtocol] = {}
         self._processes: Dict[str, ProcessProtocol] = {}
         self._interfaces: Dict[str, ProcessProtocol] = {}
-        # type-safe context using RuntimeProtocol
-        self.ctx: ContextProtocol = Context(
-            clock=self.clock, runtime=self, events=self.events, state=self.state
-        )
-        self._booted: bool = False
-        self.version: str = get_version()
         self._service_supervisor: ServiceSupervisor | None = None
 
     def _on_boot(self) -> None:
@@ -80,16 +80,24 @@ class Runtime(RuntimeProtocol):
     def register_service(self, service: ServiceProtocol) -> None:
         if self._booted:
             raise RuntimeError("Cannot register services after boot")
+        if service.name in self._services:
+            raise ValueError(f"Service with name `{service.name}` already registered")
         self._services[service.name] = service
 
     def register_process(self, process: ProcessProtocol) -> None:
         if self._booted:
             raise RuntimeError("Cannot register processes after boot")
+        if process.name in self._processes:
+            raise ValueError(f"Process with name `{process.name}` already registered")
         self._processes[process.name] = process
 
     def register_interface(self, interface: ProcessProtocol) -> None:
         if self._booted:
             raise RuntimeError("Cannot register interfaces after boot")
+        if interface.name in self._interfaces:
+            raise ValueError(
+                f"Interface with name `{interface.name}` already registered"
+            )
         self._interfaces[interface.name] = interface
 
     def attach_device(self, device: DeviceProtocol) -> None:
@@ -199,8 +207,6 @@ class Runtime(RuntimeProtocol):
             self.ctx.emit(message.RuntimeShutdown(version=self.version))
 
             self._sub.cancel()
-        except Exception:
-            raise
         finally:
             # Ensure state is reset even if on_shutdown fails
             self._booted = False

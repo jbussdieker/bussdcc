@@ -8,24 +8,25 @@ from .level import EventLevel
 
 
 @dataclass(slots=True, frozen=True)
-class SystemReload(Message):
-    name = "system.reload"
+class ProcessStarted(Message):
+    name = "process.started"
+
+    process: str
 
 
 @dataclass(slots=True, frozen=True)
-class SystemSignal(Message):
-    name = "system.signal"
+class ProcessStopped(Message):
+    name = "process.stopped"
 
-    signal: int
-    action: str
+    process: str
 
 
 @dataclass(slots=True, frozen=True)
-class EventSubscriberError(Message):
-    name = "event.subscriber_error"
+class ProcessError(Message):
+    name = "process.error"
     level = EventLevel.ERROR
 
-    event: str
-    handler: str
+    process: str
     error: str
+    evt: Event[Message] | None = None
     traceback: str | None = None

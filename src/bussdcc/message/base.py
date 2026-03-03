@@ -4,7 +4,7 @@ from typing import ClassVar, Any
 from .level import EventLevel
 
 
-@dataclass(slots=True)
+@dataclass(slots=True, frozen=True)
 class Message:
     name: ClassVar[str]
     level: ClassVar[EventLevel] = EventLevel.INFO

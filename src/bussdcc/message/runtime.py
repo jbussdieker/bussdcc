@@ -4,28 +4,28 @@ from typing import Optional
 from .base import Message
 
 
-@dataclass(slots=True)
+@dataclass(slots=True, frozen=True)
 class RuntimeBooting(Message):
     name = "runtime.booting"
 
     version: str
 
 
-@dataclass(slots=True)
+@dataclass(slots=True, frozen=True)
 class RuntimeBooted(Message):
     name = "runtime.booted"
 
     version: str
 
 
-@dataclass(slots=True)
+@dataclass(slots=True, frozen=True)
 class RuntimeShuttingDown(Message):
     name = "runtime.shutting_down"
 
     reason: str | None
 
 
-@dataclass(slots=True)
+@dataclass(slots=True, frozen=True)
 class RuntimeShutdown(Message):
     name = "runtime.shutdown"
 
