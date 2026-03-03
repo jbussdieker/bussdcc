@@ -35,9 +35,22 @@ class ServiceSupervisor:
 
     def _start_service(self, service: ServiceProtocol) -> None:
         def runner() -> None:
+            try:
+                service.start(self.ctx)
+            except Exception as e:
+                self.ctx.emit(
+                    message.ServiceError(
+                        service=service.name,
+                        error=repr(e),
+                        traceback=traceback.format_exc(),
+                    )
+                )
+                return
+
+            self.ctx.emit(message.ServiceStarted(service=service.name))
+
             while not self._stop_flag.is_set():
                 try:
-                    service.start(self.ctx)
                     while (
                         getattr(service, "enabled", True)
                         and not self._stop_flag.is_set()
@@ -80,4 +93,3 @@ class ServiceSupervisor:
         t = threading.Thread(target=runner, name=f"service:{service.name}", daemon=True)
         self._threads[service.name] = t
         t.start()
-        self.ctx.emit(message.ServiceStarted(service=service.name))

@@ -262,3 +262,4 @@ class Runtime(RuntimeProtocol):
         finally:
             # Ensure state is reset even if on_shutdown fails
             self._booted = False
+            self._service_supervisor = None
