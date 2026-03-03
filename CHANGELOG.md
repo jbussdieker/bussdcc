@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.28.0](https://github.com/jbussdieker/bussdcc/compare/v0.27.1...v0.28.0) (2026-03-03)
+
+
+### Features
+
+* **clock, runtime:** introduce replay clock and runtime for event replay ([757e94d](https://github.com/jbussdieker/bussdcc/commit/757e94d034e5ae2177df30e75e1c51c0fd8609f7))
+
 ## [0.27.1](https://github.com/jbussdieker/bussdcc/compare/v0.27.0...v0.27.1) (2026-03-03)
 
 
