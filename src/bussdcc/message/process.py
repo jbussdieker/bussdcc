@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing import Any
 
 from bussdcc.event import Event
 

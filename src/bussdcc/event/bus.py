@@ -1,4 +1,4 @@
-from typing import List, Any, TypeVar, cast
+from typing import List, TypeVar, cast
 import traceback
 import threading
 

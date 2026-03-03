@@ -1,4 +1,4 @@
-from typing import Protocol, Callable, Any, TypeVar
+from typing import Protocol, Callable, TypeVar
 
 from .event import Event
 from ..message import Message
