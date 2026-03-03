@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.27.0](https://github.com/jbussdieker/bussdcc/compare/v0.26.0...v0.27.0) (2026-03-03)
+
+
+### Features
+
+* **message,runtime:** enhance message handling with new classes and frozen dataclasses ([1472723](https://github.com/jbussdieker/bussdcc/commit/1472723619c391e450c5a3735d119ca85ff550dd))
+
+
+### Documentation
+
+* **readme:** update project description for clarity ([842e337](https://github.com/jbussdieker/bussdcc/commit/842e337f5fd7cd95cba9e359b469a22660460aa1))
+
 ## [0.26.0](https://github.com/jbussdieker/bussdcc/compare/v0.25.0...v0.26.0) (2026-03-01)
 
 
