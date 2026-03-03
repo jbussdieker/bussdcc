@@ -3,8 +3,7 @@ name = "bussdcc"
 dynamic = [
     "version",
 ]
-dependencies = [
-]
+dependencies = []
 description = "A strongly-typed cybernetic kernel for building durable event-driven systems in Python."
 readme = "README.md"
 requires-python = ">=3.11"
@@ -21,7 +20,7 @@ classifiers = [
     "Topic :: System :: Systems Administration",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
     "Topic :: Scientific/Engineering :: Human Machine Interfaces",
-    "Development Status :: 2 - Pre-Alpha",
+    "Development Status :: 3 - Alpha",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
