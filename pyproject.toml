@@ -5,7 +5,7 @@ dynamic = [
 ]
 dependencies = [
 ]
-description = "A cybernetic runtime for Python, providing a resilient core for managing devices, services, and processes in autonomous or IoT systems."
+description = "A strongly-typed cybernetic kernel for building durable event-driven systems in Python."
 readme = "README.md"
 requires-python = ">=3.11"
 authors = [
@@ -37,13 +37,11 @@ keywords = [
     "runtime",
     "orchestration",
     "automation",
-    "iot",
     "hardware-control",
     "process-management",
     "service-management",
     "kernel",
     "durable",
-    "python-framework",
 ]
 license = "MIT"
 
