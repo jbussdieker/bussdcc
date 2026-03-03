@@ -3,7 +3,7 @@
 ![License](https://img.shields.io/badge/license-MIT-blue)
 ![Python](https://img.shields.io/badge/python-3.11%2B-brightgreen)
 
-**bussdcc** (Bussdieker Durable Cybernetic Core) is a **minimal, strongly-typed cybernetic runtime for Python**.
+bussdcc is a strongly-typed cybernetic kernel for building durable event-driven systems in Python.
 
 It provides a resilient core for building systems that coordinate **devices**, **processes**, **services**, and **interfaces** through **explicit lifecycles**, **event-driven communication**, and **strict typing**.
 
