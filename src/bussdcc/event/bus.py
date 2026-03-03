@@ -6,7 +6,7 @@ from .event import Event
 from .handler import TypedHandler
 from .protocol import EventHandler, SubscriptionProtocol, EventBusProtocol
 
-from ..message import Message, EventLevel
+from ..message import Message, Severity
 from .. import message
 
 T = TypeVar("T")
@@ -57,7 +57,7 @@ class EventBus(EventBusProtocol):
                 sub._handler.handle(evt)
             except Exception as e:
                 # Never recurse on error-level events
-                if evt.payload.level >= EventLevel.ERROR:
+                if evt.payload.severity >= Severity.ERROR:
                     continue
 
                 try:

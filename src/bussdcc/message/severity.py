@@ -1,7 +1,7 @@
 from enum import IntEnum
 
 
-class EventLevel(IntEnum):
+class Severity(IntEnum):
     DEBUG = 10
     INFO = 20
     WARNING = 30

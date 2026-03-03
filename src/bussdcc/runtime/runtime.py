@@ -6,7 +6,7 @@ from bussdcc.context import Context, ContextProtocol
 from bussdcc.clock import ClockProtocol, SystemClock
 from bussdcc.device import DeviceProtocol
 from bussdcc.event import Event, EventBus, EventBusProtocol
-from bussdcc.message import Message, EventLevel
+from bussdcc.message import Message, Severity
 from bussdcc.state import StateStore, StateStoreProtocol
 from bussdcc.service import ServiceProtocol, ServiceSupervisor
 from bussdcc.process import ProcessProtocol
@@ -54,7 +54,7 @@ class Runtime(RuntimeProtocol):
         try:
             process.handle_event(self.ctx, evt)
         except Exception as e:
-            if evt.payload.level >= EventLevel.ERROR:
+            if evt.payload.severity >= Severity.ERROR:
                 return
 
             self.ctx.emit(
@@ -72,7 +72,7 @@ class Runtime(RuntimeProtocol):
         try:
             service.handle_event(self.ctx, evt)
         except Exception as e:
-            if evt.payload.level >= EventLevel.ERROR:
+            if evt.payload.severity >= Severity.ERROR:
                 return
 
             self.ctx.emit(

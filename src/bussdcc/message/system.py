@@ -4,7 +4,7 @@ from typing import Any
 from bussdcc.event import Event
 
 from .base import Message
-from .level import EventLevel
+from .severity import Severity
 
 
 @dataclass(slots=True, frozen=True)
@@ -23,7 +23,7 @@ class SystemSignal(Message):
 @dataclass(slots=True, frozen=True)
 class EventSubscriberError(Message):
     name = "event.subscriber_error"
-    level = EventLevel.ERROR
+    severity = Severity.ERROR
 
     event: str
     handler: str

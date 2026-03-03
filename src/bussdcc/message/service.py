@@ -4,13 +4,13 @@ from typing import Any
 from bussdcc.event import Event
 
 from .base import Message
-from .level import EventLevel
+from .severity import Severity
 
 
 @dataclass(slots=True, frozen=True)
 class ServiceError(Message):
     name = "service.error"
-    level = EventLevel.ERROR
+    severity = Severity.ERROR
 
     service: str
     error: str
@@ -21,7 +21,7 @@ class ServiceError(Message):
 @dataclass(slots=True, frozen=True)
 class ServiceFailure(Message):
     name = "service.failure"
-    level = EventLevel.CRITICAL
+    severity = Severity.CRITICAL
 
     service: str
     error: str

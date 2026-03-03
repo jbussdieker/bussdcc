@@ -4,7 +4,7 @@ from typing import Any
 from bussdcc.event import Event
 
 from .base import Message
-from .level import EventLevel
+from .severity import Severity
 
 
 @dataclass(slots=True, frozen=True)
@@ -24,7 +24,7 @@ class ProcessStopped(Message):
 @dataclass(slots=True, frozen=True)
 class ProcessError(Message):
     name = "process.error"
-    level = EventLevel.ERROR
+    severity = Severity.ERROR
 
     process: str
     error: str

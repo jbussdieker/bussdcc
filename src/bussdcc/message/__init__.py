@@ -1,4 +1,4 @@
-from .level import *
+from .severity import *
 
 from .base import *
 from .device import *
