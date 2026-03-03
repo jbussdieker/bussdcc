@@ -6,7 +6,7 @@ from bussdcc.context import Context, ContextProtocol
 from bussdcc.clock import ClockProtocol, SystemClock
 from bussdcc.device import DeviceProtocol
 from bussdcc.event import Event, EventBus, EventBusProtocol
-from bussdcc.message import Message
+from bussdcc.message import Message, EventLevel
 from bussdcc.state import StateStore, StateStoreProtocol
 from bussdcc.service import ServiceProtocol, ServiceSupervisor
 from bussdcc.process import ProcessProtocol
@@ -48,8 +48,60 @@ class Runtime(RuntimeProtocol):
         """Hook for subclasses to release resources."""
         return None
 
+    def _dispatch_to_process(
+        self, process: ProcessProtocol, evt: Event[Message]
+    ) -> None:
+        try:
+            process.handle_event(self.ctx, evt)
+        except Exception as e:
+            if evt.payload.level >= EventLevel.ERROR:
+                return
+
+            self.ctx.emit(
+                message.ProcessError(
+                    process=process.name,
+                    error=repr(e),
+                    evt=evt,
+                    traceback=traceback.format_exc(),
+                )
+            )
+
+    def _dispatch_to_service(
+        self, service: ServiceProtocol, evt: Event[Message]
+    ) -> None:
+        try:
+            service.handle_event(self.ctx, evt)
+        except Exception as e:
+            if evt.payload.level >= EventLevel.ERROR:
+                return
+
+            self.ctx.emit(
+                message.ServiceError(
+                    service=service.name,
+                    error=repr(e),
+                    evt=evt,
+                    traceback=traceback.format_exc(),
+                )
+            )
+
     def _dispatch(self, evt: Event[Message]) -> None:
-        pass
+        """
+        Authoritative dispatch entrypoint.
+
+        Called for every emitted Message.
+        """
+
+        # Processes
+        for process in self._processes.values():
+            self._dispatch_to_process(process, evt)
+
+        # Interfaces
+        for interface in self._interfaces.values():
+            self._dispatch_to_process(interface, evt)
+
+        # Services (event-driven side)
+        for service in self._services.values():
+            self._dispatch_to_service(service, evt)
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} booted={self._booted}>"
