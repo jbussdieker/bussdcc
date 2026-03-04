@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.30.0](https://github.com/jbussdieker/bussdcc/compare/v0.29.0...v0.30.0) (2026-03-04)
+
+
+### Features
+
+* **message:** remove 'name' attribute and introduce message key registry ([b0c477a](https://github.com/jbussdieker/bussdcc/commit/b0c477a2239e0ea699f8f609149e92645b9946fc))
+
 ## [0.29.0](https://github.com/jbussdieker/bussdcc/compare/v0.28.0...v0.29.0) (2026-03-04)
 
 
