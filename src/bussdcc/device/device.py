@@ -1,4 +1,5 @@
 import traceback
+from typing import Optional, Any
 
 from bussdcc.device import DeviceProtocol
 from bussdcc.context import ContextProtocol
@@ -11,8 +12,9 @@ class Device(DeviceProtocol):
     ctx: ContextProtocol | None
     online: bool
 
-    def __init__(self, *, id: str) -> None:
+    def __init__(self, *, id: str, config: Optional[dict[str, Any]] = None):
         self.id = id
+        self.config = config or {}
         self.ctx = None
         self.online = False
 
