@@ -8,20 +8,17 @@ from .severity import Severity
 
 @dataclass(slots=True, frozen=True)
 class SystemReload(Message):
-    name = "system.reload"
+    pass
 
 
 @dataclass(slots=True, frozen=True)
 class SystemSignal(Message):
-    name = "system.signal"
-
     signal: int
     action: str
 
 
 @dataclass(slots=True, frozen=True)
 class EventSubscriberError(Message):
-    name = "event.subscriber_error"
     severity = Severity.ERROR
 
     event: str

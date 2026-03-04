@@ -8,21 +8,16 @@ from .severity import Severity
 
 @dataclass(slots=True, frozen=True)
 class ProcessStarted(Message):
-    name = "process.started"
-
     process: str
 
 
 @dataclass(slots=True, frozen=True)
 class ProcessStopped(Message):
-    name = "process.stopped"
-
     process: str
 
 
 @dataclass(slots=True, frozen=True)
 class ProcessError(Message):
-    name = "process.error"
     severity = Severity.ERROR
 
     process: str

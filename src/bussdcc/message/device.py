@@ -8,23 +8,18 @@ from .severity import Severity
 
 @dataclass(slots=True, frozen=True)
 class DeviceAttached(Message):
-    name = "device.attached"
-
     device: str
     kind: str
 
 
 @dataclass(slots=True, frozen=True)
 class DeviceDetached(Message):
-    name = "device.detached"
-
     device: str
     kind: str
 
 
 @dataclass(slots=True, frozen=True)
 class DeviceFailed(Message):
-    name = "device.failed"
     severity = Severity.ERROR
 
     device: str
