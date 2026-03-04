@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.29.0](https://github.com/jbussdieker/bussdcc/compare/v0.28.0...v0.29.0) (2026-03-04)
+
+
+### Features
+
+* **device:** add optional config parameter to Device class ([d928be7](https://github.com/jbussdieker/bussdcc/commit/d928be7a634ccb5ccc7833edaadd733c800e7bc3))
+
 ## [0.28.0](https://github.com/jbussdieker/bussdcc/compare/v0.27.1...v0.28.0) (2026-03-03)
 
 
