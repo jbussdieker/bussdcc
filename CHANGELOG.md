@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.31.0](https://github.com/jbussdieker/bussdcc/compare/v0.30.0...v0.31.0) (2026-03-05)
+
+
+### Features
+
+* **io:** define protocols for boundary IO ([36043d5](https://github.com/jbussdieker/bussdcc/commit/36043d55c423e21e9567c4cc0f1d5b60d6041460))
+
 ## [0.30.0](https://github.com/jbussdieker/bussdcc/compare/v0.29.0...v0.30.0) (2026-03-04)
 
 
