@@ -5,9 +5,9 @@ from bussdcc.context import Context, ContextProtocol
 from bussdcc.clock import ClockProtocol, ReplayClock
 from bussdcc.event import EventBusProtocol
 from bussdcc.state import StateStoreProtocol
+from bussdcc.io import EventSourceProtocol
 
 from .runtime import Runtime
-from .source import EventSource
 
 
 class ReplayRuntime(Runtime):
@@ -29,7 +29,7 @@ class ReplayRuntime(Runtime):
         self.start_at = start_at
         super().__init__(clock=replay_clock, events=events, state=state)
 
-    def replay(self, source: EventSource) -> None:
+    def replay(self, source: EventSourceProtocol) -> None:
         it = iter(source)
 
         try:
