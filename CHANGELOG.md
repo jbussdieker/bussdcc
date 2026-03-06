@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.32.0](https://github.com/jbussdieker/bussdcc/compare/v0.31.0...v0.32.0) (2026-03-06)
+
+
+### Features
+
+* **message:** update message key handling and registry logic ([5ab1759](https://github.com/jbussdieker/bussdcc/commit/5ab17596929e54f5b7ed93993f31fc8b2c91b24c))
+
 ## [0.31.0](https://github.com/jbussdieker/bussdcc/compare/v0.30.0...v0.31.0) (2026-03-05)
 
 
