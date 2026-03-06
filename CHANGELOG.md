@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.32.2](https://github.com/jbussdieker/bussdcc/compare/v0.32.1...v0.32.2) (2026-03-06)
+
+
+### Bug Fixes
+
+* **message:** simplify subclass initialization ([73ce038](https://github.com/jbussdieker/bussdcc/commit/73ce03820d4e6ab108db67fb1de63cf1442a6faa))
+
 ## [0.32.1](https://github.com/jbussdieker/bussdcc/compare/v0.32.0...v0.32.1) (2026-03-06)
 
 
