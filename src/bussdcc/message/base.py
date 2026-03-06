@@ -9,9 +9,7 @@ class Message:
     severity: ClassVar[Severity] = Severity.INFO
     _registry: ClassVar[dict[str, type["Message"]]] = {}
 
-    def __init_subclass__(cls, **kwargs: Any) -> None:
-        super().__init_subclass__(**kwargs)
-
+    def __init_subclass__(cls) -> None:
         name = cls.__name__
         existing = cls._registry.get(name)
 
