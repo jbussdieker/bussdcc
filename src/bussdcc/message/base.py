@@ -9,18 +9,34 @@ class Message:
     severity: ClassVar[Severity] = Severity.INFO
     _registry: ClassVar[dict[str, type["Message"]]] = {}
 
-    def __init_subclass__(cls) -> None:
-        key = f"{cls.__module__}.{cls.__qualname__}"
-        Message._registry[key] = cls
+    def __init_subclass__(cls, **kwargs: Any) -> None:
+        super().__init_subclass__(**kwargs)
 
-    def to_dict(self) -> dict[str, Any]:
-        return asdict(self)
+        name = cls.__name__
+        existing = cls._registry.get(name)
+
+        if existing is None:
+            cls._registry[name] = cls
+            return
+
+        if existing.__module__ == cls.__module__:
+            cls._registry[name] = cls
+            return
+
+        raise RuntimeError(
+            f"Duplicate message definition for {name}: " f"{existing} vs {cls}"
+        )
 
     @classmethod
     def resolve(cls, key: str) -> type["Message"]:
-        return cls._registry[key]
+        try:
+            return cls._registry[key]
+        except KeyError:
+            raise KeyError(f"Unknown message type: {key}") from None
 
     @classmethod
-    def key_for(cls, message: "Message") -> str:
-        c = type(message)
-        return f"{c.__module__}.{c.__qualname__}"
+    def key(cls) -> str:
+        return cls.__name__
+
+    def to_dict(self) -> dict[str, Any]:
+        return asdict(self)
