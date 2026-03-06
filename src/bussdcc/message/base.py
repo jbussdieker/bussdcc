@@ -28,14 +28,14 @@ class Message:
         )
 
     @classmethod
-    def resolve(cls, key: str) -> type["Message"]:
+    def _resolve(cls, key: str) -> type["Message"]:
         try:
             return cls._registry[key]
         except KeyError:
             raise KeyError(f"Unknown message type: {key}") from None
 
     @classmethod
-    def key(cls) -> str:
+    def _key(cls) -> str:
         return cls.__name__
 
     def to_dict(self) -> dict[str, Any]:

@@ -66,7 +66,7 @@ class EventBus(EventBusProtocol):
                         payload=cast(
                             Message,
                             message.EventSubscriberError(
-                                event=evt.payload.key(),
+                                event=evt.payload._key(),
                                 handler=repr(sub._handler),
                                 error=repr(e),
                                 traceback=traceback.format_exc(),
