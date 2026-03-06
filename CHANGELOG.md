@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.32.1](https://github.com/jbussdieker/bussdcc/compare/v0.32.0...v0.32.1) (2026-03-06)
+
+
+### Bug Fixes
+
+* **message, event:** update key handling methods ([cac90c3](https://github.com/jbussdieker/bussdcc/commit/cac90c3bbfa5c26bf9c0ab9269f83d05e157ebf4))
+
 ## [0.32.0](https://github.com/jbussdieker/bussdcc/compare/v0.31.0...v0.32.0) (2026-03-06)
 
 
