@@ -7,16 +7,7 @@ from bussdcc.context.protocol import ContextProtocol
 from bussdcc.service.protocol import ServiceProtocol
 from bussdcc.message import service as message
 
-
-@dataclass(frozen=True)
-class ServiceInfo:
-    name: str
-    running: bool
-    enabled: bool
-    attached: bool
-    interval: float
-    restart: bool
-    critical: bool
+from .info import ServiceInfo
 
 
 @dataclass
