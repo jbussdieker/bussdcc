@@ -35,10 +35,9 @@ class Runtime(RuntimeProtocol):
 
         self._booted: bool = False
         self._devices: Dict[str, DeviceProtocol] = {}
-        self._services: Dict[str, ServiceProtocol] = {}
         self._processes: Dict[str, ProcessProtocol] = {}
         self._interfaces: Dict[str, ProcessProtocol] = {}
-        self._service_supervisor: ServiceSupervisor | None = None
+        self.services = ServiceSupervisor(self.ctx)
 
     def _on_boot(self) -> None:
         """Hook for subclasses to initialize resources."""
@@ -100,7 +99,7 @@ class Runtime(RuntimeProtocol):
             self._dispatch_to_process(interface, evt)
 
         # Services (event-driven side)
-        for service in self._services.values():
+        for service in self.services.running():
             self._dispatch_to_service(service, evt)
 
     def __repr__(self) -> str:
@@ -128,13 +127,6 @@ class Runtime(RuntimeProtocol):
     @property
     def booted(self) -> bool:
         return self._booted
-
-    def register_service(self, service: ServiceProtocol) -> None:
-        if self._booted:
-            raise RuntimeError("Cannot register services after boot")
-        if service.name in self._services:
-            raise ValueError(f"Service with name `{service.name}` already registered")
-        self._services[service.name] = service
 
     def register_process(self, process: ProcessProtocol) -> None:
         if self._booted:
@@ -212,13 +204,7 @@ class Runtime(RuntimeProtocol):
         self._booted = True
         self.ctx.emit(message.RuntimeBooted(version=self.version))
 
-        # Start services under supervisor
-        self._service_supervisor = ServiceSupervisor(self.ctx)
-        for service in self._services.values():
-            service.attach(self.ctx)
-            self._service_supervisor.register(service)
-
-        self._service_supervisor.start_all()
+        self.services.boot()
 
     def shutdown(self, reason: Optional[str] = None) -> None:
         if not self._booted:
@@ -227,12 +213,7 @@ class Runtime(RuntimeProtocol):
         try:
             self.ctx.emit(message.RuntimeShuttingDown(reason=reason))
 
-            # Stop services first then detach
-            if self._service_supervisor:
-                self._service_supervisor.stop_all()
-
-            for service in self._services.values():
-                service.detach()
+            self.services.shutdown()
 
             # Stop and detach interfaces
             for interface in self._interfaces.values():
@@ -262,4 +243,3 @@ class Runtime(RuntimeProtocol):
         finally:
             # Ensure state is reset even if on_shutdown fails
             self._booted = False
-            self._service_supervisor = None

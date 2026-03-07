@@ -1,95 +1,249 @@
-from typing import Dict
 import threading
 import traceback
+from dataclasses import dataclass
+from typing import Dict, List
 
-from bussdcc.context import ContextProtocol
-from bussdcc import message
+from bussdcc.context.protocol import ContextProtocol
+from bussdcc.service.protocol import ServiceProtocol
+from bussdcc.message import service as message
 
-from .protocol import ServiceProtocol
+
+@dataclass(frozen=True)
+class ServiceInfo:
+    name: str
+    running: bool
+    enabled: bool
+    attached: bool
+    interval: float
+    restart: bool
+    critical: bool
+
+
+@dataclass
+class _ServiceEntry:
+    service: ServiceProtocol
+    attached: bool = False
+    running: bool = False
+    thread: threading.Thread | None = None
+    stop_event: threading.Event | None = None
 
 
 class ServiceSupervisor:
-    """
-    Orchestrates services: start, tick, stop, and restart.
-    """
-
     def __init__(self, ctx: ContextProtocol):
-        self.ctx = ctx
-        self._services: Dict[str, ServiceProtocol] = {}
-        self._threads: Dict[str, threading.Thread] = {}
-        self._stop_flag = threading.Event()
+        self._ctx = ctx
+        self._services: Dict[str, _ServiceEntry] = {}
+        self._lock = threading.RLock()
 
     def register(self, service: ServiceProtocol) -> None:
-        self._services[service.name] = service
+        with self._lock:
+            if service.name in self._services:
+                raise ValueError(f"Service `{service.name}` already registered")
 
-    def start_all(self) -> None:
-        self._stop_flag.clear()
-        for service in self._services.values():
-            self._start_service(service)
+            self._services[service.name] = _ServiceEntry(service=service)
+
+    def names(self) -> list[str]:
+        with self._lock:
+            return list(self._services)
+
+    def list(self) -> list[ServiceProtocol]:
+        with self._lock:
+            return [entry.service for entry in self._services.values()]
+
+    def get(self, name: str) -> ServiceProtocol | None:
+        with self._lock:
+            entry = self._services.get(name)
+            return entry.service if entry else None
+
+    def status(self, name: str) -> ServiceInfo:
+        with self._lock:
+            entry = self._services[name]
+
+            return ServiceInfo(
+                name=entry.service.name,
+                running=entry.running,
+                enabled=entry.service.enabled,
+                attached=entry.attached,
+                interval=entry.service.interval,
+                restart=entry.service.restart,
+                critical=entry.service.critical,
+            )
+
+    def statuses(self) -> List[ServiceInfo]:
+        with self._lock:
+            return [
+                ServiceInfo(
+                    name=e.service.name,
+                    running=e.running,
+                    enabled=e.service.enabled,
+                    attached=e.attached,
+                    interval=e.service.interval,
+                    restart=e.service.restart,
+                    critical=e.service.critical,
+                )
+                for e in self._services.values()
+            ]
+
+    def boot(self) -> None:
+        with self._lock:
+            for entry in self._services.values():
+                if not entry.attached:
+                    try:
+                        entry.service.attach(self._ctx)
+                        entry.attached = True
+                    except Exception as e:
+                        self._ctx.emit(
+                            message.ServiceFailure(
+                                service=entry.service.name,
+                                error=repr(e),
+                                traceback=traceback.format_exc(),
+                            )
+                        )
+
+            for name in self._services:
+                self._start_locked(name)
 
     def stop_all(self) -> None:
-        self._stop_flag.set()
-        for t in self._threads.values():
-            t.join()
-        self._threads.clear()
+        with self._lock:
+            names = list(self._services)
+        for name in names:
+            self.stop(name)
 
-    def _start_service(self, service: ServiceProtocol) -> None:
-        def runner() -> None:
+    def start(self, name: str) -> None:
+        with self._lock:
+            self._start_locked(name)
+
+    def is_running(self, name: str) -> bool:
+        with self._lock:
+            entry = self._services.get(name)
+            return bool(entry and entry.running)
+
+    def running(self) -> List[ServiceProtocol]:
+        with self._lock:
+            return [entry.service for entry in self._services.values() if entry.running]
+
+    def stop(self, name: str) -> None:
+        with self._lock:
+            entry = self._services[name]
+
+            if not entry.running:
+                return
+
+            assert entry.stop_event is not None
+            assert entry.thread is not None
+
+            entry.stop_event.set()
+
+        thread = entry.thread
+
+        if thread:
+            thread.join()
+
+        entry.service.stop(self._ctx)
+
+        with self._lock:
+            entry.running = False
+            entry.thread = None
+            entry.stop_event = None
+
+    def enable(self, name: str) -> None:
+        with self._lock:
+            entry = self._services[name]
+            entry.service.enabled = True
+
+    def disable(self, name: str) -> None:
+        with self._lock:
+            entry = self._services[name]
+            entry.service.enabled = False
+            running = entry.running
+
+        if running:
+            self.stop(name)
+
+    def shutdown(self) -> None:
+        self.stop_all()
+
+        with self._lock:
+            services = list(self._services.values())
+
+        for entry in services:
             try:
-                service.start(self.ctx)
+                entry.service.detach()
             except Exception as e:
-                self.ctx.emit(
+                self._ctx.emit(
                     message.ServiceError(
-                        service=service.name,
+                        service=entry.service.name,
                         error=repr(e),
                         traceback=traceback.format_exc(),
                     )
                 )
-                return
 
-            self.ctx.emit(message.ServiceStarted(service=service.name))
+    def _start_locked(self, name: str) -> None:
+        """Caller must hold self._lock."""
+        entry = self._services[name]
 
-            while not self._stop_flag.is_set():
+        if not entry.service.enabled or entry.running:
+            return
+
+        stop_event = threading.Event()
+
+        thread = threading.Thread(
+            target=self._run_service,
+            name=f"svc:{name}",
+            args=(entry, stop_event),
+            daemon=True,
+        )
+
+        entry.thread = thread
+        entry.stop_event = stop_event
+        entry.running = True
+
+        thread.start()
+
+        self._ctx.emit(message.ServiceStarted(service=name))
+
+    def _run_service(
+        self,
+        entry: _ServiceEntry,
+        stop_event: threading.Event,
+    ) -> None:
+        svc = entry.service
+        ctx = self._ctx
+
+        try:
+            svc.start(ctx)
+
+            while not stop_event.is_set():
+
                 try:
-                    while (
-                        getattr(service, "enabled", True)
-                        and not self._stop_flag.is_set()
-                    ):
-                        service.tick(self.ctx)
-                        interval = getattr(service, "interval", 1.0)
+                    svc.tick(ctx)
 
-                        interrupted = self.ctx.clock.sleep(
-                            interval,
-                            cancel=self._stop_flag,
-                        )
-
-                        if interrupted:
-                            break
                 except Exception as e:
-                    self.ctx.emit(
+                    ctx.emit(
                         message.ServiceError(
-                            service=service.name,
+                            service=svc.name,
                             error=repr(e),
                             traceback=traceback.format_exc(),
                         )
                     )
-                    if getattr(service, "critical", False):
-                        self.ctx.emit(
-                            message.ServiceFailure(service=service.name, error=repr(e))
+
+                    if svc.critical:
+                        ctx.emit(
+                            message.ServiceFailure(
+                                service=svc.name,
+                                error=repr(e),
+                                traceback=traceback.format_exc(),
+                            )
                         )
-                        # Critical failure halts supervisor
-                        self._stop_flag.set()
                         break
 
-                    if getattr(service, "restart", True):
-                        self.ctx.emit(message.ServiceRestart(service=service.name))
-                        continue  # restart the loop
-                    else:
+                    if not svc.restart:
                         break
-                finally:
-                    service.stop(self.ctx)
-                    self.ctx.emit(message.ServiceStopped(service=service.name))
 
-        t = threading.Thread(target=runner, name=f"service:{service.name}", daemon=True)
-        self._threads[service.name] = t
-        t.start()
+                    ctx.emit(message.ServiceRestart(service=svc.name))
+
+                ctx.clock.sleep(svc.interval, cancel=stop_event)
+        finally:
+            with self._lock:
+                entry.running = False
+
+            ctx.emit(message.ServiceStopped(service=svc.name))

@@ -7,6 +7,10 @@ from bussdcc.message import Message
 
 class ServiceProtocol(Protocol):
     name: str
+    interval: float  # seconds between ticks
+    enabled: bool  # start at boot
+    restart: bool  # restart if it crashes
+    critical: bool  # if True, system may halt on failure
 
     def attach(self, ctx: ContextProtocol) -> None: ...
     def detach(self) -> None: ...

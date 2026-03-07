@@ -8,13 +8,12 @@ from .protocol import ServiceProtocol
 class Service(ServiceProtocol):
     name = "unnamed"
 
-    # execution model
-    interval = 1.0  # seconds between ticks
-    enabled = True  # start at boot
-    restart = True  # restart if it crashes
-    critical = False  # if True, system may halt on failure
+    interval = 1.0
+    enabled = True
+    restart = True
+    critical = False
 
-    ctx: ContextProtocol | None
+    ctx: ContextProtocol | None = None
 
     def attach(self, ctx: ContextProtocol) -> None:
         self.ctx = ctx
