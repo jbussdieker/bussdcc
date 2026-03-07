@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.33.0](https://github.com/jbussdieker/bussdcc/compare/v0.32.2...v0.33.0) (2026-03-07)
+
+
+### Features
+
+* **runtime, service:** update service management and supervision ([8331def](https://github.com/jbussdieker/bussdcc/commit/8331def93688291c95838bf49d96589332862cc2))
+* **runtime:** integrate manager classes for devices, processes, and interfaces ([31bbd82](https://github.com/jbussdieker/bussdcc/commit/31bbd82598c52515a6136120e5b13e65ffd01163))
+
 ## [0.32.2](https://github.com/jbussdieker/bussdcc/compare/v0.32.1...v0.32.2) (2026-03-06)
 
 
