@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.34.0](https://github.com/jbussdieker/bussdcc/compare/v0.33.1...v0.34.0) (2026-03-07)
+
+
+### Features
+
+* **protocols:** introduce manager protocols for devices, interfaces, processes, and services ([f2eb490](https://github.com/jbussdieker/bussdcc/commit/f2eb4905a1deae7b28c1e4684607eb34d26e6c74))
+* **service:** enhance service protocols and introduce ServiceInfo ([1e46bbe](https://github.com/jbussdieker/bussdcc/commit/1e46bbebdd491e368190095c6f7cde6aee0f07db))
+
 ## [0.33.1](https://github.com/jbussdieker/bussdcc/compare/v0.33.0...v0.33.1) (2026-03-07)
 
 
