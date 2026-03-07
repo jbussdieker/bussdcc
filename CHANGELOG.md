@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.33.1](https://github.com/jbussdieker/bussdcc/compare/v0.33.0...v0.33.1) (2026-03-07)
+
+
+### Bug Fixes
+
+* **runtime:** remove device management methods from RuntimeProtocol ([f7b256a](https://github.com/jbussdieker/bussdcc/commit/f7b256aee20de2710303370a28ae0cec4fac95b6))
+
 ## [0.33.0](https://github.com/jbussdieker/bussdcc/compare/v0.32.2...v0.33.0) (2026-03-07)
 
 
