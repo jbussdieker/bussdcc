@@ -1,9 +1,10 @@
+from .protocol import ServiceProtocol, ServiceSupervisorProtocol
 from .service import Service
-from .protocol import ServiceProtocol
 from .supervisor import ServiceSupervisor
 
 __all__ = [
-    "ServiceSupervisor",
     "ServiceProtocol",
+    "ServiceSupervisorProtocol",
     "Service",
+    "ServiceSupervisor",
 ]
