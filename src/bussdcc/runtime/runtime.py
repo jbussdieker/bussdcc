@@ -4,12 +4,13 @@ from types import TracebackType
 
 from bussdcc.context import Context, ContextProtocol
 from bussdcc.clock import ClockProtocol, SystemClock
-from bussdcc.device import DeviceProtocol
+from bussdcc.device import DeviceProtocol, DeviceManager
 from bussdcc.event import Event, EventBus, EventBusProtocol
 from bussdcc.message import Message, Severity
 from bussdcc.state import StateStore, StateStoreProtocol
 from bussdcc.service import ServiceProtocol, ServiceSupervisor
-from bussdcc.process import ProcessProtocol
+from bussdcc.process import ProcessProtocol, ProcessManager
+from bussdcc.interface import InterfaceManager
 from bussdcc.version import get_version
 
 from bussdcc import message
@@ -34,9 +35,9 @@ class Runtime(RuntimeProtocol):
         )
 
         self._booted: bool = False
-        self._devices: Dict[str, DeviceProtocol] = {}
-        self._processes: Dict[str, ProcessProtocol] = {}
-        self._interfaces: Dict[str, ProcessProtocol] = {}
+        self.interfaces = InterfaceManager(self.ctx)
+        self.processes = ProcessManager(self.ctx)
+        self.devices = DeviceManager(self.ctx)
         self.services = ServiceSupervisor(self.ctx)
 
     def _on_boot(self) -> None:
@@ -91,11 +92,11 @@ class Runtime(RuntimeProtocol):
         """
 
         # Processes
-        for process in self._processes.values():
+        for process in self.processes.list():
             self._dispatch_to_process(process, evt)
 
         # Interfaces
-        for interface in self._interfaces.values():
+        for interface in self.interfaces.list():
             self._dispatch_to_process(interface, evt)
 
         # Services (event-driven side)
@@ -128,82 +129,18 @@ class Runtime(RuntimeProtocol):
     def booted(self) -> bool:
         return self._booted
 
-    def register_process(self, process: ProcessProtocol) -> None:
-        if self._booted:
-            raise RuntimeError("Cannot register processes after boot")
-        if process.name in self._processes:
-            raise ValueError(f"Process with name `{process.name}` already registered")
-        self._processes[process.name] = process
-
-    def register_interface(self, interface: ProcessProtocol) -> None:
-        if self._booted:
-            raise RuntimeError("Cannot register interfaces after boot")
-        if interface.name in self._interfaces:
-            raise ValueError(
-                f"Interface with name `{interface.name}` already registered"
-            )
-        self._interfaces[interface.name] = interface
-
-    def attach_device(self, device: DeviceProtocol) -> None:
-        """
-        Attach a device to the runtime.
-
-        - If called before boot(), the device is staged and attached during boot.
-        - If called after boot(), the device is attached immediately.
-        """
-        if device.id in self._devices:
-            raise ValueError(f"Device {device.id} already attached")
-
-        if not self._booted:
-            self._devices[device.id] = device
-            return
-
-        device.attach(self.ctx)
-        self._devices[device.id] = device
-
-    def detach_device(self, id: str) -> None:
-        device = self._devices.pop(id, None)
-        if not device:
-            return
-        device.detach()
-
-    def get_device(self, id: str) -> DeviceProtocol | None:
-        return self._devices.get(id)
-
-    def list_devices(self, *, kind: str | None = None) -> list[DeviceProtocol]:
-        if kind is None:
-            return list(self._devices.values())
-        return [d for d in self._devices.values() if d.kind == kind]
-
     def boot(self) -> None:
         if self._booted:
             return
 
         self._sub = self.events.subscribe(Message, self._dispatch)
-
         self.ctx.emit(message.RuntimeBooting(version=self.version))
-
         self._on_boot()
-
-        # Boot all registered devices
-        for device in self._devices.values():
-            device.attach(self.ctx)
-
-        # Attach processes
-        for process in self._processes.values():
-            process.attach(self.ctx)
-            process.start(self.ctx)
-            self.ctx.emit(message.ProcessStarted(process=process.name))
-
-        # Attach interfaces
-        for interface in self._interfaces.values():
-            interface.attach(self.ctx)
-            interface.start(self.ctx)
-            self.ctx.emit(message.InterfaceStarted(interface=interface.name))
-
+        self.devices.boot()
+        self.processes.boot()
+        self.interfaces.boot()
         self._booted = True
         self.ctx.emit(message.RuntimeBooted(version=self.version))
-
         self.services.boot()
 
     def shutdown(self, reason: Optional[str] = None) -> None:
@@ -212,33 +149,12 @@ class Runtime(RuntimeProtocol):
 
         try:
             self.ctx.emit(message.RuntimeShuttingDown(reason=reason))
-
             self.services.shutdown()
-
-            # Stop and detach interfaces
-            for interface in self._interfaces.values():
-                try:
-                    interface.stop(self.ctx)
-                finally:
-                    interface.detach()
-                    self.ctx.emit(message.InterfaceStopped(interface=interface.name))
-
-            # Stop and detach processes
-            for process in self._processes.values():
-                try:
-                    process.stop(self.ctx)
-                finally:
-                    process.detach()
-                    self.ctx.emit(message.ProcessStopped(process=process.name))
-
-            # Detach devices in reverse order
-            for device in reversed(list(self._devices.values())):
-                device.detach()
-
+            self.interfaces.shutdown()
+            self.processes.shutdown()
+            self.devices.shutdown()
             self._on_shutdown(reason)
-
             self.ctx.emit(message.RuntimeShutdown(version=self.version))
-
             self._sub.cancel()
         finally:
             # Ensure state is reset even if on_shutdown fails
