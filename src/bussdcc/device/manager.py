@@ -9,13 +9,13 @@ class DeviceManager:
         self._ctx = ctx
         self._devices: Dict[str, DeviceProtocol[Any]] = {}
 
-    def attach(self, device: DeviceProtocol[Any], *, booted: bool) -> None:
+    def attach(self, device: DeviceProtocol[Any]) -> None:
         if device.id in self._devices:
             raise ValueError(f"Device {device.id} already attached")
 
         self._devices[device.id] = device
 
-        if booted:
+        if self._ctx.runtime.booted:
             device.attach(self._ctx)
 
     def detach(self, id: str) -> None:
