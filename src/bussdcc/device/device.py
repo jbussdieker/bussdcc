@@ -1,20 +1,22 @@
 import traceback
-from typing import Optional, Any
+from typing import Optional, Any, TypeVar, Generic
 
 from bussdcc.device import DeviceProtocol
 from bussdcc.context import ContextProtocol
 from bussdcc import message
 
+ConfigT = TypeVar("ConfigT")
 
-class Device(DeviceProtocol):
+
+class Device(Generic[ConfigT], DeviceProtocol[ConfigT]):
     kind: str = "device"
     id: str
     ctx: ContextProtocol | None
     online: bool
 
-    def __init__(self, *, id: str, config: Optional[dict[str, Any]] = None):
+    def __init__(self, *, id: str, config: ConfigT):
         self.id = id
-        self.config = config or {}
+        self.config = config
         self.ctx = None
         self.online = False
 

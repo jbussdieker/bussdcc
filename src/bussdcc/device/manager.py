@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Any
 
 from bussdcc.device import DeviceProtocol
 from bussdcc.context import ContextProtocol
@@ -7,9 +7,9 @@ from bussdcc.context import ContextProtocol
 class DeviceManager:
     def __init__(self, ctx: ContextProtocol):
         self._ctx = ctx
-        self._devices: Dict[str, DeviceProtocol] = {}
+        self._devices: Dict[str, DeviceProtocol[Any]] = {}
 
-    def attach(self, device: DeviceProtocol, *, booted: bool) -> None:
+    def attach(self, device: DeviceProtocol[Any], *, booted: bool) -> None:
         if device.id in self._devices:
             raise ValueError(f"Device {device.id} already attached")
 
@@ -23,10 +23,10 @@ class DeviceManager:
         if device:
             device.detach()
 
-    def get(self, id: str) -> DeviceProtocol | None:
+    def get(self, id: str) -> DeviceProtocol[Any] | None:
         return self._devices.get(id)
 
-    def list(self, *, kind: str | None = None) -> list[DeviceProtocol]:
+    def list(self, *, kind: str | None = None) -> list[DeviceProtocol[Any]]:
         if kind is None:
             return list(self._devices.values())
 
