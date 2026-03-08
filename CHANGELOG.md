@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.35.0](https://github.com/jbussdieker/bussdcc/compare/v0.34.0...v0.35.0) (2026-03-08)
+
+
+### Features
+
+* **device:** introduce generic device definitions and update protocols ([0efc7b1](https://github.com/jbussdieker/bussdcc/commit/0efc7b10f2bee0f628d87a55469e2d7a9eef30f3))
+
 ## [0.34.0](https://github.com/jbussdieker/bussdcc/compare/v0.33.1...v0.34.0) (2026-03-07)
 
 
