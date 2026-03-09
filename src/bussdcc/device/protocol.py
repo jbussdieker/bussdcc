@@ -2,13 +2,14 @@ from typing import Protocol, TypeVar, Any, Optional
 
 from bussdcc.context import ContextProtocol
 
-ConfigT = TypeVar("ConfigT", covariant=True)
+ConfigT = TypeVar("ConfigT")
 
 
 class DeviceProtocol(Protocol[ConfigT]):
     kind: str
     id: str
     ctx: Optional[ContextProtocol]
+    config: ConfigT
 
     @property
     def online(self) -> bool: ...

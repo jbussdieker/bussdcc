@@ -12,6 +12,7 @@ class Device(Generic[ConfigT], DeviceProtocol[ConfigT]):
     kind: str = "device"
     id: str
     ctx: Optional[ContextProtocol]
+    config: ConfigT
 
     def __init__(self, *, id: str, config: ConfigT):
         self.id = id
