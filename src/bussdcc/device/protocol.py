@@ -1,4 +1,4 @@
-from typing import Protocol, TypeVar, Any
+from typing import Protocol, TypeVar, Any, Optional
 
 from bussdcc.context import ContextProtocol
 
@@ -8,8 +8,10 @@ ConfigT = TypeVar("ConfigT", covariant=True)
 class DeviceProtocol(Protocol[ConfigT]):
     kind: str
     id: str
-    ctx: ContextProtocol | None
-    online: bool
+    ctx: Optional[ContextProtocol]
+
+    @property
+    def online(self) -> bool: ...
 
     def attach(self, ctx: ContextProtocol) -> None: ...
     def detach(self) -> None: ...

@@ -1,5 +1,5 @@
 import traceback
-from typing import Optional, Any, TypeVar, Generic
+from typing import Optional, TypeVar, Generic
 
 from bussdcc.device import DeviceProtocol
 from bussdcc.context import ContextProtocol
@@ -11,14 +11,35 @@ ConfigT = TypeVar("ConfigT")
 class Device(Generic[ConfigT], DeviceProtocol[ConfigT]):
     kind: str = "device"
     id: str
-    ctx: ContextProtocol | None
-    online: bool
+    ctx: Optional[ContextProtocol]
 
     def __init__(self, *, id: str, config: ConfigT):
         self.id = id
         self.config = config
         self.ctx = None
-        self.online = False
+        self._online = False
+
+    @property
+    def online(self) -> bool:
+        return self._online
+
+    def set_online(self) -> None:
+        if not self._online:
+            self._online = True
+            if self.ctx:
+                self.ctx.emit(message.DeviceOnline(device=self.id, kind=self.kind))
+
+    def set_offline(self, error: Optional[Exception] = None) -> None:
+        if self._online:
+            self._online = False
+            if self.ctx:
+                self.ctx.emit(
+                    message.DeviceOffline(
+                        device=self.id,
+                        kind=self.kind,
+                        error=repr(error) if error else None,
+                    )
+                )
 
     def attach(self, ctx: ContextProtocol) -> None:
         self.ctx = ctx
@@ -35,9 +56,11 @@ class Device(Generic[ConfigT], DeviceProtocol[ConfigT]):
                     )
                 )
             raise
-        self.online = True
+
         if self.ctx:
             self.ctx.emit(message.DeviceAttached(device=self.id, kind=self.kind))
+
+        self.set_online()
 
     def detach(self) -> None:
         try:
@@ -53,7 +76,7 @@ class Device(Generic[ConfigT], DeviceProtocol[ConfigT]):
                     )
                 )
         finally:
-            self.online = False
+            self.set_offline()
             if self.ctx:
                 self.ctx.emit(message.DeviceDetached(device=self.id, kind=self.kind))
             self.ctx = None
