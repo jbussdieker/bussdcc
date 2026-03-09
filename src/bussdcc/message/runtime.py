@@ -1,3 +1,4 @@
+from typing import Optional
 from dataclasses import dataclass
 from typing import Optional
 
@@ -16,7 +17,7 @@ class RuntimeBooted(Message):
 
 @dataclass(slots=True, frozen=True)
 class RuntimeShuttingDown(Message):
-    reason: str | None
+    reason: Optional[str] = None
 
 
 @dataclass(slots=True, frozen=True)

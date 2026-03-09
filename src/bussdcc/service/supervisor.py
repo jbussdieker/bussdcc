@@ -1,7 +1,7 @@
 import threading
 import traceback
 from dataclasses import dataclass
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from bussdcc.context.protocol import ContextProtocol
 from bussdcc.service.protocol import ServiceProtocol
@@ -15,8 +15,8 @@ class _ServiceEntry:
     service: ServiceProtocol
     attached: bool = False
     running: bool = False
-    thread: threading.Thread | None = None
-    stop_event: threading.Event | None = None
+    thread: Optional[threading.Thread] = None
+    stop_event: Optional[threading.Event] = None
 
 
 class ServiceSupervisor:
@@ -40,7 +40,7 @@ class ServiceSupervisor:
         with self._lock:
             return [entry.service for entry in self._services.values()]
 
-    def get(self, name: str) -> ServiceProtocol | None:
+    def get(self, name: str) -> Optional[ServiceProtocol]:
         with self._lock:
             entry = self._services.get(name)
             return entry.service if entry else None

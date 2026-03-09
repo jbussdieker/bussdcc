@@ -1,3 +1,4 @@
+from typing import Optional
 from dataclasses import dataclass
 
 from bussdcc.event import Event
@@ -22,5 +23,5 @@ class ProcessError(Message):
 
     process: str
     error: str
-    evt: Event[Message] | None = None
-    traceback: str | None = None
+    evt: Optional[Event[Message]] = None
+    traceback: Optional[str] = None

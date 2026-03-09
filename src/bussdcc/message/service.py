@@ -1,3 +1,4 @@
+from typing import Optional
 from dataclasses import dataclass
 
 from bussdcc.event import Event
@@ -12,8 +13,8 @@ class ServiceError(Message):
 
     service: str
     error: str
-    evt: Event[Message] | None = None
-    traceback: str | None = None
+    evt: Optional[Event[Message]] = None
+    traceback: Optional[str] = None
 
 
 @dataclass(slots=True, frozen=True)
@@ -22,7 +23,7 @@ class ServiceFailure(Message):
 
     service: str
     error: str
-    traceback: str | None = None
+    traceback: Optional[str] = None
 
 
 @dataclass(slots=True, frozen=True)

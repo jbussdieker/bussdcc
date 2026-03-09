@@ -1,3 +1,4 @@
+from typing import Optional
 from dataclasses import dataclass
 
 from bussdcc.event import Event
@@ -24,4 +25,4 @@ class EventSubscriberError(Message):
     event: str
     handler: str
     error: str
-    traceback: str | None = None
+    traceback: Optional[str] = None

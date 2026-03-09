@@ -1,3 +1,4 @@
+from typing import Optional
 import threading
 from datetime import datetime, timezone
 import time
@@ -21,7 +22,7 @@ class SystemClock(ClockProtocol):
     def sleep(
         self,
         seconds: float,
-        cancel: threading.Event | None = None,
+        cancel: Optional[threading.Event] = None,
     ) -> bool:
         if cancel is None:
             time.sleep(seconds)

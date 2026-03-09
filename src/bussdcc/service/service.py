@@ -1,3 +1,5 @@
+from typing import Optional
+
 from bussdcc.event import Event
 from bussdcc.context import ContextProtocol
 from bussdcc.message import Message
@@ -13,7 +15,7 @@ class Service(ServiceProtocol):
     restart = True
     critical = False
 
-    ctx: ContextProtocol | None = None
+    ctx: Optional[ContextProtocol] = None
 
     def attach(self, ctx: ContextProtocol) -> None:
         self.ctx = ctx

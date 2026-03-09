@@ -23,8 +23,8 @@ class Runtime(RuntimeProtocol):
         self,
         *,
         clock: Optional[ClockProtocol] = None,
-        events: EventBusProtocol | None = None,
-        state: StateStoreProtocol | None = None,
+        events: Optional[EventBusProtocol] = None,
+        state: Optional[StateStoreProtocol] = None,
     ):
         self.clock: ClockProtocol = clock or SystemClock()
         self.events: EventBusProtocol = events or EventBus()

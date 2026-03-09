@@ -1,4 +1,4 @@
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 
 from bussdcc.device import DeviceProtocol
 from bussdcc.context import ContextProtocol
@@ -23,10 +23,10 @@ class DeviceManager:
         if device:
             device.detach()
 
-    def get(self, id: str) -> DeviceProtocol[Any] | None:
+    def get(self, id: str) -> Optional[DeviceProtocol[Any]]:
         return self._devices.get(id)
 
-    def list(self, *, kind: str | None = None) -> list[DeviceProtocol[Any]]:
+    def list(self, *, kind: Optional[str] = None) -> list[DeviceProtocol[Any]]:
         if kind is None:
             return list(self._devices.values())
 

@@ -1,3 +1,4 @@
+from typing import Optional
 import time
 import threading
 from datetime import datetime, timedelta
@@ -9,7 +10,7 @@ class ReplayClock(ClockProtocol):
     def __init__(self, *, speed: float = 1.0):
         self.speed = speed
         self._lock = threading.Condition()
-        self._now: datetime | None = None
+        self._now: Optional[datetime] = None
         self._monotonic = 0.0
         self._running = True
 
@@ -20,7 +21,7 @@ class ReplayClock(ClockProtocol):
     def monotonic(self) -> float:
         return self._monotonic
 
-    def sleep(self, seconds: float, cancel: threading.Event | None = None) -> bool:
+    def sleep(self, seconds: float, cancel: Optional[threading.Event] = None) -> bool:
         target = self._monotonic + seconds
 
         with self._lock:

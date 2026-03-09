@@ -15,10 +15,10 @@ class ReplayRuntime(Runtime):
         self,
         *,
         clock: Optional[ClockProtocol] = None,
-        events: EventBusProtocol | None = None,
-        state: StateStoreProtocol | None = None,
+        events: Optional[EventBusProtocol] = None,
+        state: Optional[StateStoreProtocol] = None,
         speed: float = 1.0,
-        start_at: datetime | None = None,
+        start_at: Optional[datetime] = None,
     ):
         replay_clock = clock or ReplayClock(speed=speed)
         if not isinstance(replay_clock, ReplayClock):

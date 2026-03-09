@@ -1,3 +1,4 @@
+from typing import Optional
 from bussdcc.event import Event
 from bussdcc.context import ContextProtocol
 from bussdcc.message import Message
@@ -8,7 +9,7 @@ from .protocol import ProcessProtocol
 class Process(ProcessProtocol):
     name = "unnamed"
 
-    ctx: ContextProtocol | None
+    ctx: Optional[ContextProtocol]
 
     def attach(self, ctx: ContextProtocol) -> None:
         self.ctx = ctx

@@ -1,6 +1,6 @@
+from typing import Dict, Callable, Optional
 from types import FrameType
 import signal
-from typing import Dict, Callable
 
 from bussdcc import message
 
@@ -20,7 +20,7 @@ class SignalRuntime(ThreadedRuntime):
         int(signal.SIGUSR2): "user2",
     }
 
-    def _signal_handler(self, signum: int, frame: FrameType | None) -> None:
+    def _signal_handler(self, signum: int, frame: Optional[FrameType]) -> None:
         action = self.SIGNAL_ACTIONS.get(signum)
 
         if action == "shutdown":
@@ -39,7 +39,7 @@ class SignalRuntime(ThreadedRuntime):
             self._prev_handlers[signum] = signal.getsignal(signum)
             signal.signal(signum, self._signal_handler)
 
-    def _on_shutdown(self, reason: str | None = None) -> None:
+    def _on_shutdown(self, reason: Optional[str] = None) -> None:
         try:
             for signum, handler in self._prev_handlers.items():
                 signal.signal(signum, handler)

@@ -1,3 +1,4 @@
+from typing import Optional
 from dataclasses import dataclass
 
 from bussdcc.event import Event
@@ -8,6 +9,12 @@ from .severity import Severity
 
 @dataclass(slots=True, frozen=True)
 class DeviceAttached(Message):
+    device: str
+    kind: str
+
+
+@dataclass(slots=True, frozen=True)
+class DeviceOnline(Message):
     device: str
     kind: str
 
@@ -25,4 +32,11 @@ class DeviceFailed(Message):
     device: str
     kind: str
     error: str
-    traceback: str | None = None
+    traceback: Optional[str] = None
+
+
+@dataclass(slots=True, frozen=True)
+class DeviceOffline(Message):
+    device: str
+    kind: str
+    error: Optional[str] = None
