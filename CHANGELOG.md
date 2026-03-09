@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.36.0](https://github.com/jbussdieker/bussdcc/compare/v0.35.0...v0.36.0) (2026-03-09)
+
+
+### Features
+
+* **device:** enhance device online/offline state management ([1afcd55](https://github.com/jbussdieker/bussdcc/commit/1afcd55dcc8f6447c9d45065b5c747999b908aaf))
+
 ## [0.35.0](https://github.com/jbussdieker/bussdcc/compare/v0.34.0...v0.35.0) (2026-03-08)
 
 
