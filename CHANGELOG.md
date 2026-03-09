@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.37.0](https://github.com/jbussdieker/bussdcc/compare/v0.36.0...v0.37.0) (2026-03-09)
+
+
+### Features
+
+* **device:** add config attribute to Device and DeviceProtocol ([aa96f8d](https://github.com/jbussdieker/bussdcc/commit/aa96f8d6cebc81e54cceb838847658d3a5ea7a60))
+
 ## [0.36.0](https://github.com/jbussdieker/bussdcc/compare/v0.35.0...v0.36.0) (2026-03-09)
 
 
