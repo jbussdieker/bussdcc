@@ -32,7 +32,7 @@ bussdcc enforces:
 * **Supervised background services**
 * **Deterministic boot and shutdown**
 
-It is not a framework.
+It is not an application framework.
 
 It is a **coordination kernel**.
 
