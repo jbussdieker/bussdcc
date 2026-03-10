@@ -12,7 +12,7 @@ class ReplayClock(ClockProtocol):
         self._lock = threading.Condition()
         self._now: Optional[datetime] = None
         self._monotonic = 0.0
-        self._running = True
+        self._running = False
 
     def now_utc(self) -> datetime:
         assert self._now is not None, "Replay clock not started"
