@@ -1,5 +1,32 @@
 # Changelog
 
+## [0.38.0](https://github.com/jbussdieker/bussdcc/compare/v0.37.0...v0.38.0) (2026-03-10)
+
+
+### Features
+
+* **event:** enhance event emission with queue processing ([415bd30](https://github.com/jbussdieker/bussdcc/commit/415bd307e67684e93e816e3fa726e89671965873))
+
+
+### Bug Fixes
+
+* **clock:** ensure replay clock starts correctly after stopping ([2e33cc8](https://github.com/jbussdieker/bussdcc/commit/2e33cc8d7d9d9380af2b5dee5f1c9aa913c217ad))
+* **clock:** set replay clock to not running by default ([355487f](https://github.com/jbussdieker/bussdcc/commit/355487fa5219341e9c330a920ca6a01dd8145bf5))
+* **event:** skip cancelled subscribers during event handling ([98fb41a](https://github.com/jbussdieker/bussdcc/commit/98fb41accd2bc0767861dd91c7cb2df00de8ae50))
+* **manager:** reverse shutdown order for interfaces and processes ([85a30ed](https://github.com/jbussdieker/bussdcc/commit/85a30edfe3beb74e89d83e33d088a728f216a766))
+* **replay:** remove redundant hasattr check for advance_to method ([19f2765](https://github.com/jbussdieker/bussdcc/commit/19f276511bf9ad4da3e44c44f90b3e1e8bfd9f9e))
+* **runtime:** prevent duplicate first message replay ([2d56acc](https://github.com/jbussdieker/bussdcc/commit/2d56acc7b99a9be50508e04ab75752147370a068))
+* **service:** ensure proper cleanup of service supervisor state ([4a38e5d](https://github.com/jbussdieker/bussdcc/commit/4a38e5dc45ce20f8f3b4fec0042d5363443aad19))
+* **service:** skip disabled services during supervisor boot ([e0ce596](https://github.com/jbussdieker/bussdcc/commit/e0ce596a3fb679775bb02792a25e25fb59ef6d05))
+
+
+### Documentation
+
+* **readme:** clarify definition of BussDCC ([1822b02](https://github.com/jbussdieker/bussdcc/commit/1822b0208d914862fd6ca274a78ffbbf42c0a59d))
+* **readme:** clarify description of the project ([87b1e89](https://github.com/jbussdieker/bussdcc/commit/87b1e89ee9dcf843f647350c010f6552a8c4d34a))
+* **readme:** update import statement in quick start example ([c59a1be](https://github.com/jbussdieker/bussdcc/commit/c59a1be77094a8b01cebb60e52fd141397d4b4be))
+* **runtime:** add comment for message dispatcher ([e1a4454](https://github.com/jbussdieker/bussdcc/commit/e1a44543119e4084c78f9f799aeb362598d1feda))
+
 ## [0.37.0](https://github.com/jbussdieker/bussdcc/compare/v0.36.0...v0.37.0) (2026-03-09)
 
 
