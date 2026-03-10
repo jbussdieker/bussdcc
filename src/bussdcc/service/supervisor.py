@@ -236,5 +236,7 @@ class ServiceSupervisor:
         finally:
             with self._lock:
                 entry.running = False
+                entry.thread = None
+                entry.stop_event = None
 
             ctx.emit(message.ServiceStopped(service=svc.name))
