@@ -52,6 +52,7 @@ class ReplayClock(ClockProtocol):
             if self._now is not None:
                 raise RuntimeError("ReplayClock already started")
 
+            self._running = True
             self._now = start_time
             self._monotonic = 0.0
             self._lock.notify_all()
