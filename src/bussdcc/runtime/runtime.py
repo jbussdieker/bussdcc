@@ -133,7 +133,9 @@ class Runtime(RuntimeProtocol):
         if self._booted:
             return
 
+        # Runtime is the authoritative dispatcher for all messages
         self._sub = self.events.subscribe(Message, self._dispatch)
+
         self.ctx.emit(message.RuntimeBooting(version=self.version))
         self._on_boot()
         self.devices.boot()
