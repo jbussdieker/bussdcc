@@ -26,7 +26,7 @@ class ProcessManager:
             self._ctx.emit(message.ProcessStarted(process=process.name))
 
     def shutdown(self) -> None:
-        for process in self._processes.values():
+        for process in reversed(list(self._processes.values())):
             try:
                 process.stop(self._ctx)
             finally:

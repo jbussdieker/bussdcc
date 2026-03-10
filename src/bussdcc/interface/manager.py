@@ -26,7 +26,7 @@ class InterfaceManager:
             self._ctx.emit(message.InterfaceStarted(interface=interface.name))
 
     def shutdown(self) -> None:
-        for interface in self._interfaces.values():
+        for interface in reversed(list(self._interfaces.values())):
             try:
                 interface.stop(self._ctx)
             finally:
