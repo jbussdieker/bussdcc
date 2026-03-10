@@ -337,7 +337,7 @@ Signals are converted into typed system messages.
 
 # What BussDCC Is
 
-* A cybernetic coordination kernel
+* A cybernetic (feedback-driven) coordination kernel
 * A durable event-driven runtime
 * Suitable for:
 
