@@ -59,6 +59,9 @@ class EventBus(EventBusProtocol):
             current = queue.popleft()
 
             for sub in subs:
+                if sub._cancelled:
+                    continue
+
                 try:
                     sub._handler.handle(current)
                 except Exception as e:
