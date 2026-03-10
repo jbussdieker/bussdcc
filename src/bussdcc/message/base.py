@@ -10,19 +10,15 @@ class Message:
     _registry: ClassVar[dict[str, type["Message"]]] = {}
 
     def __init_subclass__(cls) -> None:
-        name = cls.__name__
-        existing = cls._registry.get(name)
+        key = f"{cls.__module__}.{cls.__name__}"
+        existing = cls._registry.get(key)
 
-        if existing is None:
-            cls._registry[name] = cls
-            return
-
-        if existing.__module__ == cls.__module__:
-            cls._registry[name] = cls
+        if existing is None or existing.__module__ == cls.__module__:
+            cls._registry[key] = cls
             return
 
         raise RuntimeError(
-            f"Duplicate message definition for {name}: " f"{existing} vs {cls}"
+            f"Duplicate message definition for {key}: " f"{existing} vs {cls}"
         )
 
     @classmethod
@@ -34,7 +30,7 @@ class Message:
 
     @classmethod
     def _key(cls) -> str:
-        return cls.__name__
+        return f"{cls.__module__}.{cls.__name__}"
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
