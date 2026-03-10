@@ -48,7 +48,7 @@ class ReplayRuntime(Runtime):
 
         self.events.emit(first)
 
-        for evt in source:
+        for evt in it:
             if not self.booted:
                 break
             if hasattr(self._replay_clock, "advance_to"):
