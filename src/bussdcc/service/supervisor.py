@@ -77,6 +77,8 @@ class ServiceSupervisor:
     def boot(self) -> None:
         with self._lock:
             for entry in self._services.values():
+                if not entry.service.enabled:
+                    continue
                 if not entry.attached:
                     try:
                         entry.service.attach(self._ctx)
