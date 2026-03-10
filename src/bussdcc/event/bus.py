@@ -1,4 +1,5 @@
 from typing import List, TypeVar, cast
+from collections import deque
 import traceback
 import threading
 
@@ -49,33 +50,38 @@ class EventBus(EventBusProtocol):
         subscription.cancel()
 
     def emit(self, evt: Event[Message]) -> None:
+        queue = deque([evt])
+
         with self._lock:
             subs = list(self._subscriptions)
 
-        for sub in subs:
-            try:
-                sub._handler.handle(evt)
-            except Exception as e:
-                # Never recurse on error-level events
-                if evt.payload.severity >= Severity.ERROR:
-                    continue
+        while queue:
+            current = queue.popleft()
 
+            for sub in subs:
                 try:
-                    error_evt = Event(
-                        time=evt.time,
-                        payload=cast(
-                            Message,
-                            message.EventSubscriberError(
-                                event=evt.payload._key(),
-                                handler=repr(sub._handler),
-                                error=repr(e),
-                                traceback=traceback.format_exc(),
+                    sub._handler.handle(current)
+                except Exception as e:
+                    # Never recurse on error-level events
+                    if current.payload.severity >= Severity.ERROR:
+                        continue
+
+                    try:
+                        error_evt = Event(
+                            time=current.time,
+                            payload=cast(
+                                Message,
+                                message.EventSubscriberError(
+                                    event=current.payload._key(),
+                                    handler=repr(sub._handler),
+                                    error=repr(e),
+                                    traceback=traceback.format_exc(),
+                                ),
                             ),
-                        ),
-                    )
+                        )
 
-                    self.emit(error_evt)  # SAFE: guarded by level check
+                        queue.append(error_evt)
 
-                except Exception:
-                    # Absolute last-resort safety
-                    pass
+                    except Exception:
+                        # Absolute last-resort safety
+                        pass
