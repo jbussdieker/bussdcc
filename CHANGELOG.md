@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.39.0](https://github.com/jbussdieker/bussdcc/compare/v0.38.0...v0.39.0) (2026-03-11)
+
+
+### Features
+
+* **api:** expand public API with additional runtime and protocol classes ([62af318](https://github.com/jbussdieker/bussdcc/commit/62af3187a37e7ef15faedc404aa4a01b9a756468))
+
+
+### Documentation
+
+* **readme:** simplify import statements in quick start example ([5096946](https://github.com/jbussdieker/bussdcc/commit/50969460862089736179348f0acaa6f0a2f3aa7d))
+
 ## [0.38.0](https://github.com/jbussdieker/bussdcc/compare/v0.37.0...v0.38.0) (2026-03-10)
 
 
