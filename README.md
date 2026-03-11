@@ -39,10 +39,7 @@ It is a **coordination kernel**.
 # Quick Start
 
 ```python
-from bussdcc import Runtime, message
-from bussdcc.device import Device
-from bussdcc.process import Process
-from bussdcc.service import Service
+from bussdcc import Runtime, Device, Process, Service, message
 
 class MySensor(Device):
     kind = "sensor"
