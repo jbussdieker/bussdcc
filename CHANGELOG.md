@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.40.0](https://github.com/jbussdieker/bussdcc/compare/v0.39.0...v0.40.0) (2026-03-16)
+
+
+### Features
+
+* **device:** update config handling in Device and DeviceProtocol ([ffc5ca0](https://github.com/jbussdieker/bussdcc/commit/ffc5ca0676c5787b4649b894fb53f5da4d4f0beb))
+* **message:** simplify Message class and update event handling ([a2d086e](https://github.com/jbussdieker/bussdcc/commit/a2d086e04126f2422b203d42bb2b9ba147450371))
+* **runtime:** move SignalRuntime to framework ([78bbc7c](https://github.com/jbussdieker/bussdcc/commit/78bbc7c072dc2f13bce09cb000c802095cd981e2))
+* **runtime:** remove ThreadedRuntime and integrate threading into Runtime ([6f1676e](https://github.com/jbussdieker/bussdcc/commit/6f1676e1b0c259917687a5c8aefe7e2be4522f41))
+
 ## [0.39.0](https://github.com/jbussdieker/bussdcc/compare/v0.38.0...v0.39.0) (2026-03-11)
 
 
