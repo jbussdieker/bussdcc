@@ -12,17 +12,22 @@ class Device(Generic[ConfigT], DeviceProtocol[ConfigT]):
     kind: str = "device"
     id: str
     ctx: Optional[ContextProtocol]
-    config: ConfigT
 
-    def __init__(self, *, id: str, config: ConfigT):
+    def __init__(self, *, id: str, config: Optional[ConfigT] = None):
         self.id = id
-        self.config = config
         self.ctx = None
+        self._config = config
         self._online = False
 
     @property
     def online(self) -> bool:
         return self._online
+
+    @property
+    def config(self) -> ConfigT:
+        if self._config is None:
+            raise RuntimeError("Device not configured")
+        return self._config
 
     def set_online(self) -> None:
         if not self._online:

@@ -2,17 +2,19 @@ from typing import Protocol, TypeVar, Any, Optional
 
 from bussdcc.context import ContextProtocol
 
-ConfigT = TypeVar("ConfigT")
+ConfigT = TypeVar("ConfigT", covariant=True)
 
 
 class DeviceProtocol(Protocol[ConfigT]):
     kind: str
     id: str
     ctx: Optional[ContextProtocol]
-    config: ConfigT
 
     @property
     def online(self) -> bool: ...
+
+    @property
+    def config(self) -> ConfigT: ...
 
     def attach(self, ctx: ContextProtocol) -> None: ...
     def detach(self) -> None: ...
