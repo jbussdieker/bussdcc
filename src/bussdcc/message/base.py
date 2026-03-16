@@ -1,5 +1,5 @@
-from dataclasses import asdict, dataclass
-from typing import ClassVar, Any
+from typing import ClassVar
+from dataclasses import dataclass
 
 from .severity import Severity
 
@@ -7,30 +7,3 @@ from .severity import Severity
 @dataclass(slots=True, frozen=True)
 class Message:
     severity: ClassVar[Severity] = Severity.INFO
-    _registry: ClassVar[dict[str, type["Message"]]] = {}
-
-    def __init_subclass__(cls) -> None:
-        key = f"{cls.__module__}.{cls.__name__}"
-        existing = cls._registry.get(key)
-
-        if existing is None or existing.__module__ == cls.__module__:
-            cls._registry[key] = cls
-            return
-
-        raise RuntimeError(
-            f"Duplicate message definition for {key}: " f"{existing} vs {cls}"
-        )
-
-    @classmethod
-    def _resolve(cls, key: str) -> type["Message"]:
-        try:
-            return cls._registry[key]
-        except KeyError:
-            raise KeyError(f"Unknown message type: {key}") from None
-
-    @classmethod
-    def _key(cls) -> str:
-        return f"{cls.__module__}.{cls.__name__}"
-
-    def to_dict(self) -> dict[str, Any]:
-        return asdict(self)

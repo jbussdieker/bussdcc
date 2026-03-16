@@ -22,7 +22,7 @@ class SystemSignal(Message):
 class EventSubscriberError(Message):
     severity = Severity.ERROR
 
-    event: str
+    event: Event[Message]
     handler: str
     error: str
     traceback: Optional[str] = None
