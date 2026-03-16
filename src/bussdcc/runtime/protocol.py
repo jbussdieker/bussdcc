@@ -1,4 +1,4 @@
-from typing import Protocol
+from typing import Protocol, Optional
 
 from bussdcc.device import DeviceProtocol, DeviceManagerProtocol
 from bussdcc.context import ContextProtocol
@@ -16,3 +16,7 @@ class RuntimeProtocol(Protocol):
 
     @property
     def booted(self) -> bool: ...
+
+    def boot(self) -> None: ...
+    def run(self) -> None: ...
+    def shutdown(self, reason: Optional[str] = None) -> None: ...

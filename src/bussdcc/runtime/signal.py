@@ -4,10 +4,10 @@ import signal
 
 from bussdcc import message
 
-from .threaded import ThreadedRuntime
+from .runtime import Runtime
 
 
-class SignalRuntime(ThreadedRuntime):
+class SignalRuntime(Runtime):
     """
     Threaded runtime supervised by POSIX signals.
     """

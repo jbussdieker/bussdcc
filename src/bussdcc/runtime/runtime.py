@@ -1,4 +1,5 @@
 import traceback
+import threading
 from typing import Optional, Dict, Self, Type, Literal, TypeVar
 from types import TracebackType
 
@@ -35,6 +36,7 @@ class Runtime(RuntimeProtocol):
         )
 
         self._booted: bool = False
+        self._stop_event = threading.Event()
         self.interfaces = InterfaceManager(self.ctx)
         self.processes = ProcessManager(self.ctx)
         self.devices = DeviceManager(self.ctx)
@@ -145,6 +147,12 @@ class Runtime(RuntimeProtocol):
         self.ctx.emit(message.RuntimeBooted(version=self.version))
         self.services.boot()
 
+    def run(self) -> None:
+        self._stop_event.clear()
+
+        with self:
+            self._stop_event.wait()
+
     def shutdown(self, reason: Optional[str] = None) -> None:
         if not self._booted:
             return  # Be idempotent on shutdown to avoid exit crashes
@@ -161,3 +169,4 @@ class Runtime(RuntimeProtocol):
         finally:
             # Ensure state is reset even if on_shutdown fails
             self._booted = False
+            self._stop_event.set()
