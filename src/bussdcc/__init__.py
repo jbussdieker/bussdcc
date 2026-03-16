@@ -1,4 +1,4 @@
-from .runtime import RuntimeProtocol, Runtime, SignalRuntime
+from .runtime import RuntimeProtocol, Runtime
 from .context import ContextProtocol
 from .device import Device, DeviceProtocol
 from .process import Process
@@ -10,7 +10,6 @@ from .version import __version__, get_version
 __all__ = [
     "RuntimeProtocol",
     "Runtime",
-    "SignalRuntime",
     "ContextProtocol",
     "Device",
     "DeviceProtocol",
