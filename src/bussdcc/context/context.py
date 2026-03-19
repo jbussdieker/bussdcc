@@ -1,5 +1,3 @@
-from typing import TypeVar
-
 from bussdcc.clock import ClockProtocol
 from bussdcc.event import Event
 from bussdcc.message import Message
@@ -8,8 +6,6 @@ from bussdcc.event.protocol import EventBusProtocol
 from bussdcc.state.protocol import StateStoreProtocol
 
 from .protocol import ContextProtocol
-
-T = TypeVar("T")
 
 
 class Context(ContextProtocol):
