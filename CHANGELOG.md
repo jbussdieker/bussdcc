@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.41.0](https://github.com/jbussdieker/bussdcc/compare/v0.40.0...v0.41.0) (2026-03-26)
+
+
+### Features
+
+* **runtime:** update ReplayRuntime to improve replay handling ([3315dcb](https://github.com/jbussdieker/bussdcc/commit/3315dcba35ea3fcd9359dd50d52d608d1c4cf057))
+
 ## [0.40.0](https://github.com/jbussdieker/bussdcc/compare/v0.39.0...v0.40.0) (2026-03-16)
 
 
