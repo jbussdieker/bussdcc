@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.42.0](https://github.com/jbussdieker/bussdcc/compare/v0.41.0...v0.42.0) (2026-04-20)
+
+
+### Features
+
+* **clock:** add uptime method to ClockProtocol and ReplayClock ([134e0ea](https://github.com/jbussdieker/bussdcc/commit/134e0eaf2d1c3963ea2b9118389da1b62c5d5b22))
+
 ## [0.41.0](https://github.com/jbussdieker/bussdcc/compare/v0.40.0...v0.41.0) (2026-03-26)
 
 
