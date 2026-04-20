@@ -21,6 +21,9 @@ class ReplayClock(ClockProtocol):
     def monotonic(self) -> float:
         return self._monotonic
 
+    def uptime(self) -> float:
+        return self.monotonic()
+
     def sleep(self, seconds: float, cancel: Optional[threading.Event] = None) -> bool:
         target = self._monotonic + seconds
 
